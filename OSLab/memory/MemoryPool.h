@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <fstream>
-#include "Log.h"
 
 using namespace std;
 

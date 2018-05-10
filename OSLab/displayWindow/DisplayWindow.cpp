@@ -1,4 +1,5 @@
 #include "DisplayWindow.h"
+#include "../log/Log.h"
 #include <string>
 #include <vector>
 
