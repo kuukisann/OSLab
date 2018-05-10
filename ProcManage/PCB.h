@@ -2,6 +2,7 @@
 #include<vector>
 using namespace std;
 
+/*æ¥å£å‡½æ•°
 struct os_file
 {
 
@@ -21,9 +22,9 @@ vector<int> osMalloc(int memSize)
 {
 
 }
+*/
 
-
-enum procstate { NEW, READY, RUNNING, WAITING, FINISH, DIED}; // ½ø³Ì×´Ì¬£ºĞÂ½¨ ¾ÍĞ÷ ÔËĞĞ µÈ´ı Íê³É ËÀÍö
+enum procstate { NEW, READY, RUNNING, WAITING, FINISH, DIED}; // è¿›ç¨‹çŠ¶æ€ï¼šæ–°å»º å°±ç»ª è¿è¡Œ ç­‰å¾… å®Œæˆ æ­»äº¡
 
 class PCB
 {
@@ -34,22 +35,22 @@ public:
 		vector<int> Mem, int ArriveTime, int ServiceTime);
 	~PCB();
 
-	unsigned int PID; //½ø³ÌPID
-	string Path; //½ø³ÌËùÔÚÎÄ¼şÂ·¾¶
-	string Name; // ½ø³ÌÃû³Æ
-	os_file* procftr; // ½ø³ÌÎÄ¼şÖ¸Õë
+	unsigned int PID; //è¿›ç¨‹PID
+	string Path; //è¿›ç¨‹æ‰€åœ¨æ–‡ä»¶è·¯å¾„
+	string Name; // è¿›ç¨‹åç§°
+	os_file* procftr; // è¿›ç¨‹æ–‡ä»¶æŒ‡é’ˆ
 
-	vector<int> Mem; //½ø³ÌÄÚ´æ¿é
-	int Size; //½ø³ÌÕ¼ÓÃÄÚ´æ¿é´óĞ¡
-	procstate State;  //½ø³Ì×´Ì¬
-	unsigned int Prio;//ÓÅÏÈ¼¶
+	vector<int> Mem; //è¿›ç¨‹å†…å­˜å—
+	int Size; //è¿›ç¨‹å ç”¨å†…å­˜å—å¤§å°
+	procstate State;  //è¿›ç¨‹çŠ¶æ€
+	unsigned int Prio;//ä¼˜å…ˆçº§
 
-	int ArrivalTime; //½ø³Ì´´½¨Ê±¼ä  
-	int StartTime;  //½ø³Ì¿ªÊ¼ÔËĞĞÊ±¼ä  
-	int ServiceTime;//½ø³Ì·şÎñÊ±¼ä
-	int RunTime;//ÒÑ¾­Õ¼ÓÃCPUÊ±¼ä
-	int NeedTime;//»¹ÒªÕ¼ÓÃCPUÊ±¼ä
-	int FinishTime;//½ø³Ì½áÊøÊ±¼ä
+	int ArrivalTime; //è¿›ç¨‹åˆ›å»ºæ—¶é—´  
+	int StartTime;  //è¿›ç¨‹å¼€å§‹è¿è¡Œæ—¶é—´  
+	int ServiceTime;//è¿›ç¨‹æœåŠ¡æ—¶é—´
+	int RunTime;//å·²ç»å ç”¨CPUæ—¶é—´
+	int NeedTime;//è¿˜è¦å ç”¨CPUæ—¶é—´
+	int FinishTime;//è¿›ç¨‹ç»“æŸæ—¶é—´
 
 	bool operator == (const PCB &a)const
 	{
@@ -66,7 +67,7 @@ private:
 
 
 
-PCB::PCB(){} // ¿Õ¹¹Ôìº¯Êı
+PCB::PCB(){} // ç©ºæ„é€ å‡½æ•°
 
 PCB::PCB(
 	unsigned int PID, string Path, string Name, os_file* f,
@@ -84,11 +85,11 @@ PCB::PCB(
 	this->Prio = Prio;
 	
 	this->ArrivalTime = ArrivalTime;
-	this->StartTime = -1; //-1 ±íÊ¾½ø³Ì´ÓÎ´¿ªÊ¼ÔËĞĞ
+	this->StartTime = -1; //-1 è¡¨ç¤ºè¿›ç¨‹ä»æœªå¼€å§‹è¿è¡Œ
 	this->ServiceTime = ServiceTime;
 	this->RunTime = 0;
 	this->NeedTime = ServiceTime;
-	this->FinishTime = -1; //-1 ±íÊ¾½ø³ÌÎ´Íê³É
+	this->FinishTime = -1; //-1 è¡¨ç¤ºè¿›ç¨‹æœªå®Œæˆ
 }
 
 PCB::~PCB(){}
