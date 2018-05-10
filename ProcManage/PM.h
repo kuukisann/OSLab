@@ -7,36 +7,36 @@
 using namespace std;
 
 
-#define MAXMEMORYSIZE 10240//×î´óÎïÀíÄÚ´æ(Bytes)  10MB
-#define MAXPAGESIZE 32//×î´óÒ³´óĞ¡(Bytes) 
-#define MAXSWAPFILESIZE 20480 //×î´ó·ÖÒ³ÎÄ¼ş´óĞ¡ 20MB
+#define MAXMEMORYSIZE 10240//æœ€å¤§ç‰©ç†å†…å­˜(Bytes)  10MB
+#define MAXPAGESIZE 32//æœ€å¤§é¡µå¤§å°(Bytes) 
+#define MAXSWAPFILESIZE 20480 //æœ€å¤§åˆ†é¡µæ–‡ä»¶å¤§å° 20MB
 
-#define MAXPROC 64 //×î´ó½ø³ÌÊı readlistºÍwaitlistµÄ×Ü½ø³ÌÊı
+#define MAXPROC 64 //æœ€å¤§è¿›ç¨‹æ•° readlistå’Œwaitlistçš„æ€»è¿›ç¨‹æ•°
 
-#define MAXPROCMEM 160 // µ¥¸ö½ø³Ì×î´óÕ¼ÓÃÄÚ´æ 160Bytes
+#define MAXPROCMEM 160 // å•ä¸ªè¿›ç¨‹æœ€å¤§å ç”¨å†…å­˜ 160Bytes //ç›®å‰æ²¡ç”¨
 
 
 struct PCB_Show
 {
-	unsigned int PID; //½ø³ÌPID
-	string Name; // ½ø³ÌÃû³Æ
-	int Size; //½ø³ÌÕ¼ÓÃÄÚ´æ¿é´óĞ¡
-	procstate State;  //½ø³Ì×´Ì¬
-	unsigned int Prio;//ÓÅÏÈ¼¶
-	int ServiceTime;//½ø³Ì·şÎñÊ±¼ä
-	int RunTime;//ÒÑ¾­Õ¼ÓÃCPUÊ±¼ä
+	unsigned int PID; //è¿›ç¨‹PID
+	string Name; // è¿›ç¨‹åç§°
+	int Size; //è¿›ç¨‹å ç”¨å†…å­˜å—å¤§å°
+	procstate State;  //è¿›ç¨‹çŠ¶æ€
+	unsigned int Prio;//ä¼˜å…ˆçº§
+	int ServiceTime;//è¿›ç¨‹æœåŠ¡æ—¶é—´
+	int RunTime;//å·²ç»å ç”¨CPUæ—¶é—´
 };
 
 
 
 
-enum  schedulestrategies { FCFS, SJF, RR, PRIO } ; // µ÷¶ÈÀàĞÍ:	ÏÈÀ´ÏÈ·şÎñ	×î¶ÌÊ£ÓàÊ±¼äÓÅÏÈ	Ê±¼äÆ¬ÂÖ×ª	ÓÅÏÈ¼¶µ÷¶È
+enum  schedulestrategies { FCFS, SJF, RR, PRIO } ; // è°ƒåº¦ç±»å‹:	å…ˆæ¥å…ˆæœåŠ¡	æœ€çŸ­å‰©ä½™æ—¶é—´ä¼˜å…ˆ	æ—¶é—´ç‰‡è½®è½¬	ä¼˜å…ˆçº§è°ƒåº¦
 
 
 class PM
 {
 public:
-	PM(int t = 0, schedulestrategies s = RR, int tp = 2) // ¹¹Ôìº¯Êı Ä¬ÈÏµ±Ç°Ê±¼ä0£¬RRµ÷¶ÈËã·¨£¬Ê±¼äÆ¬Îª2¡£
+	PM(int t = 0, schedulestrategies s = RR, int tp = 2) // æ„é€ å‡½æ•° é»˜è®¤å½“å‰æ—¶é—´0ï¼ŒRRè°ƒåº¦ç®—æ³•ï¼Œæ—¶é—´ç‰‡ä¸º2ã€‚
 	{
 		currenttime = t;
 		strategy = s;
@@ -44,23 +44,23 @@ public:
 		currentmemory = 0;
 		timepiece = tp;
 	}
-	list<PCB> readylist; //ÔËĞĞ¼°¾ÍĞ÷¶ÓÁĞ ¼´Õ¼ÓÃÄÚ´æµÄ¶ÓÁĞ
-	list<PCB> waitlist; // µÈ´ı¶ÓÁĞ£¬ÔÚ´´½¨¹ı³ÌÖĞÓÉÓÚÄÚ´æ²»¹»µÈÔ­Òò¶øÎŞ·¨½øÈëÄÚ´æµÄ½ø³Ì
+	list<PCB> readylist; //è¿è¡ŒåŠå°±ç»ªé˜Ÿåˆ— å³å ç”¨å†…å­˜çš„é˜Ÿåˆ—
+	list<PCB> waitlist; // ç­‰å¾…é˜Ÿåˆ—ï¼Œåœ¨åˆ›å»ºè¿‡ç¨‹ä¸­ç”±äºå†…å­˜ä¸å¤Ÿç­‰åŸå› è€Œæ— æ³•è¿›å…¥å†…å­˜çš„è¿›ç¨‹
 
-	unsigned int createPID(); // Î¬»¤Ò»¸öPID³Ø£¬·µ»ØPID
+	unsigned int createPID(); // ç»´æŠ¤ä¸€ä¸ªPIDæ± ï¼Œè¿”å›PID
 	
 
-	void addproc(string path); // Ìí¼Ó½ø³Ì
-	void killproc(unsigned int PID); // Ç¿ÖÆ½áÊø½ø³Ì
-	void scheduleproc(); // µ÷¶È½ø³Ì
+	void addproc(string path); // æ·»åŠ è¿›ç¨‹
+	void killproc(unsigned int PID); // å¼ºåˆ¶ç»“æŸè¿›ç¨‹
+	void scheduleproc(); // è°ƒåº¦è¿›ç¨‹
 	vector<PCB_Show> showreadylist();
 	vector<PCB_Show> showwaitlist();
 private:
-	int currenttime; //µ±Ç°Ê±¼ä
-	int currentnumproc; // µ±Ç°½ø³ÌÊı °üÀ¨ readylist ºÍ waitlist
-	int currentmemory; // µ±Ç°ËùÓĞ½ø³ÌÒÑÕ¼ÓÃÄÚ´æ´óĞ¡
-	schedulestrategies strategy; // µ÷¶È²ßÂÔ
-	int timepiece; // Ê±¼äÆ¬´óĞ¡
+	int currenttime; //å½“å‰æ—¶é—´
+	int currentnumproc; // å½“å‰è¿›ç¨‹æ•° åŒ…æ‹¬ readylist å’Œ waitlist
+	int currentmemory; // å½“å‰æ‰€æœ‰è¿›ç¨‹å·²å ç”¨å†…å­˜å¤§å°
+	schedulestrategies strategy; // è°ƒåº¦ç­–ç•¥
+	int timepiece; // æ—¶é—´ç‰‡å¤§å°
 };
 
 
@@ -75,22 +75,22 @@ void PM::addproc(string path)
 {
 	if (currentnumproc >= MAXPROC)
 	{
-		// ÎŞ·¨´´½¨½ø³Ì Êä³ölog»ò ÌáĞÑÓÃ»§
+		// æ— æ³•åˆ›å»ºè¿›ç¨‹ è¾“å‡ºlogæˆ– æé†’ç”¨æˆ·
 		return;
 	}
 
 	os_file* f = Open_File(path);
-	if (f) // ÎÄ¼ş´æÔÚ
+	if (f) // æ–‡ä»¶å­˜åœ¨
 	{
 		int buf[2];
-		if (os_fread(buf, sizeof(buf), f)) // ¶ÁÈ¡³É¹¦ ¶ÁÈ¡Ç°8¸ö×Ö½Ú
+		if (os_fread(buf, sizeof(buf), f)) // è¯»å–æˆåŠŸ è¯»å–å‰8ä¸ªå­—èŠ‚
 		{
 			int memsize = buf[0];
 			int servicetime = buf[1];
 			if (memsize == 0 || servicetime == 0)
 			{
-				//ÉêÇëÄÚ´æÎª0 »òÕß ·şÎñÊ±¼äÎª0
-				// log ´´½¨½ø³Ì²ÎÊıÓĞÎó
+				//ç”³è¯·å†…å­˜ä¸º0 æˆ–è€… æœåŠ¡æ—¶é—´ä¸º0
+				// log åˆ›å»ºè¿›ç¨‹å‚æ•°æœ‰è¯¯
 				return;
 			}
 			vector<int> mem = osMalloc(memsize);
@@ -116,7 +116,7 @@ void PM::addproc(string path)
 	}
 	else
 	{
-		// ÎÄ¼ş²»´æÔÚ
+		// æ–‡ä»¶ä¸å­˜åœ¨
 	}
 }
 
@@ -127,12 +127,12 @@ void PM::killproc(unsigned int PID)
 
 
 /*
-½ø³Ìµ÷¶Èº¯Êı
-Ë¢ĞÂreadylist£¬ ½«ÆäÖĞ×´Ì¬ÎªFINISHµÄ½ø³ÌÒÆ³ö£¬ÊÍ·ÅÏà¹Ø×ÊÔ´£ºPID£¬ÄÚ´æ£¬´ò¿ªÎÄ¼şµÈ£»¼ÆËãÏà¹Ø×ÊÔ´ÀûÓÃÂÊ£»²¢Ğ´Èëlog¡£
-Ë¢ĞÂreadylistºÍwaitlist£¬½«×´Ì¬ÎªDIEDµÄ½ø³ÌÒÆ³ö£¬ÊÍ·ÅPID£¬´ò¿ªÎÄ¼ş£¬readylistÖĞµÄ»¹ĞèÊÍ·ÅÄÚ´æ£»Ğ´Èëlog¡£
-±éÀúwaitlist£¬ÎªwaitlistÖĞ¿ÉĞĞµÄ½ø³Ì£¨ÄÚ´æ¿ÉÉêÇë£©ÉêÇëÄÚ´æ£¬ÒÆ³öwaitlist£¬ÒÆÈëreadylistÄ©Î²£¬½«×´Ì¬¸ÄÎªready¡£
-¸ù¾İµ÷¶È²ßÂÔ´ÓreadylistÖĞÑ¡È¡Ò»¸öºÏÊÊµÄ½ø³Ì·ÅÔÚ readylist Í·²¿£¬±íÊ¾µ±Ç°Ê±¼äÆ¬ÔËĞĞ¸ÃÑ¡ÖĞ³ÌĞò
-Ë¢ĞÂreadlist
+è¿›ç¨‹è°ƒåº¦å‡½æ•°
+åˆ·æ–°readylistï¼Œ å°†å…¶ä¸­çŠ¶æ€ä¸ºFINISHçš„è¿›ç¨‹ç§»å‡ºï¼Œé‡Šæ”¾ç›¸å…³èµ„æºï¼šPIDï¼Œå†…å­˜ï¼Œæ‰“å¼€æ–‡ä»¶ç­‰ï¼›è®¡ç®—ç›¸å…³èµ„æºåˆ©ç”¨ç‡ï¼›å¹¶å†™å…¥logã€‚
+åˆ·æ–°readylistå’Œwaitlistï¼Œå°†çŠ¶æ€ä¸ºDIEDçš„è¿›ç¨‹ç§»å‡ºï¼Œé‡Šæ”¾PIDï¼Œæ‰“å¼€æ–‡ä»¶ï¼Œreadylistä¸­çš„è¿˜éœ€é‡Šæ”¾å†…å­˜ï¼›å†™å…¥logã€‚
+éå†waitlistï¼Œä¸ºwaitlistä¸­å¯è¡Œçš„è¿›ç¨‹ï¼ˆå†…å­˜å¯ç”³è¯·ï¼‰ç”³è¯·å†…å­˜ï¼Œç§»å‡ºwaitlistï¼Œç§»å…¥readylistæœ«å°¾ï¼Œå°†çŠ¶æ€æ”¹ä¸ºreadyã€‚
+æ ¹æ®è°ƒåº¦ç­–ç•¥ä»readylistä¸­é€‰å–ä¸€ä¸ªåˆé€‚çš„è¿›ç¨‹æ”¾åœ¨ readylist å¤´éƒ¨ï¼Œè¡¨ç¤ºå½“å‰æ—¶é—´ç‰‡è¿è¡Œè¯¥é€‰ä¸­ç¨‹åº
+åˆ·æ–°readlist
 */
 void PM::scheduleproc()
 {
@@ -140,7 +140,7 @@ void PM::scheduleproc()
 }
 
 
-// ÒÔvector<PCB_Show>·µ»ØreadylistÖĞµÄPCB
+// ä»¥vector<PCB_Show>è¿”å›readylistä¸­çš„PCB
 vector<PCB_Show> PM::showreadylist()
 {
 	vector<PCB_Show> pr;
@@ -161,7 +161,7 @@ vector<PCB_Show> PM::showreadylist()
 }
 
 
-// ÒÔvector<PCB_Show>·µ»ØwaitlistÖĞµÄPCB
+// ä»¥vector<PCB_Show>è¿”å›waitlistä¸­çš„PCB
 vector<PCB_Show> PM::showwaitlist()
 {
 	vector<PCB_Show> pw;
