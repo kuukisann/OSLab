@@ -38,7 +38,7 @@ bool os_rmdir(string dir_name, string path){
 		return Delete_File(dir_name,f_i,path);			
 	} 
 	else{
-		printf("该目录非空，error！\n");
+		//printf("该目录非空，error！\n");
 		return 0;
 	}
 

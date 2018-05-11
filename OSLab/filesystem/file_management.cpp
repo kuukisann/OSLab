@@ -72,7 +72,7 @@ dir* analyse_Path(string path){
 			pos = temp.find('/');
 			son = temp.substr(0,pos);
 			if (dirlookup(son, father_dir) == iNode_NUM + 1) {
-				cout << "路径名错误\n";
+				//cout << "路径名错误\n";
 				return NULL;
 			}
 			find_iNode = iNode_table[dirlookup(son,father_dir)]; //从father中找到son文件的iNode		
@@ -97,7 +97,7 @@ unsigned int dirlookup(string son_name, dir father[]){
 	int i;
 	for(i=0; i<DIR_NUM && son_name!=father[i].file_name; i++){}
 	if(i == DIR_NUM){
-		printf("没有该文件，error！\n");
+		//printf("没有该文件，error！\n");
 		return iNode_NUM+1;
 	}
 	return father[i].iNode_no; 
@@ -147,14 +147,14 @@ iNode* Create_File(string pathname, unsigned short f_type){ //参数在Fill_in_i
 
 	//1.检测文件名长度
 	if (f_name.length()> Name_length){
-		printf("a shorter name is needed\n");
+		//printf("a shorter name is needed\n");
 		return NULL;
 	}
 	//2.判断是否存在同名的文件
 	if (item == NULL)
 		return NULL;
 	if (same_name(f_name, item) == -1) {
-		printf("在该目录下已有同名文件，创建失败。\n");
+		//printf("在该目录下已有同名文件，创建失败。\n");
 		return NULL;
 	}
 	//3.创建文件目录项，放在文件所在的目录的directory列表中 
@@ -162,7 +162,7 @@ iNode* Create_File(string pathname, unsigned short f_type){ //参数在Fill_in_i
 	for(i=0;i<DIR_NUM && (*(item+i)).iNode_no!=iNode_NUM + 1;i++){} //找到item的尾项///////指针数组的再看看形式//////// 
 	unsigned int temp_no = get_empty_iNode();
 	if(temp_no == iNode_NUM+1){
-		printf("没有可用iNode节点，创建失败。\n"); 
+		//printf("没有可用iNode节点，创建失败。\n"); 
 		return NULL;
 	}
 	else{ //在数组尾项添加文件目录项  	
@@ -213,7 +213,7 @@ os_file* Open_File(string f_name){
 		current_file->f_iNode = iNode_table + dirlookup(f_name,current_dir);  
 	}
 	if(current_file->f_iNode->open_num == 1){ //判断是否已经打开 
-		printf("文件已经被打开，error！\n");
+		//printf("文件已经被打开，error！\n");
 		return NULL;
 	}
 	current_file->f_pos = 0; //读指针置0 
@@ -242,7 +242,7 @@ int find_dir_no(string f_name){
 	int i;
 	for(i=0;i<DIR_NUM && (*(current_dir+i)).file_name != f_name;i++){}
 	if(i == DIR_NUM){ //目录中没有该文件
-		printf("目录中没有该文件\n");
+		//printf("目录中没有该文件\n");
 		return DIR_NUM+1;
 	}
 	return i; 

@@ -3,7 +3,6 @@
 #include<string.h>
 #include<malloc.h>
 #include "disk.h"
-#include"buf.h"
 #include "file_management.h"
 
 
@@ -18,7 +17,7 @@ bool disk_format()
 		return true;
 	}
 	else {
-		printf("Error, Cannot format the disk"); //Log输出！！！！
+		//printf("Error, Cannot format the disk"); //Log输出！！！！
 		return false;
 	}
 }
@@ -79,7 +78,7 @@ bool block_write(long block, char *buf)
 		return true;
 	}
 	else {
-		printf("Error: Cannot operate on disk!\n"); //改成log！！！
+		//printf("Error: Cannot operate on disk!\n"); //改成log！！！
 		return false;
 	}
 }
@@ -94,7 +93,7 @@ bool block_read(long block, char *buf)
 		return true;
 	}
 	else {
-		printf("Error: Cannot operate on disk!\n"); //改成log
+		//printf("Error: Cannot operate on disk!\n"); //改成log
 		return false;
 	}
 }
@@ -189,7 +188,7 @@ int os_fwrite(void *v_buf, int size, os_file *fp)
 		char *tmp_buf = (char*)malloc(size);
 		fseek(disk_p, fp->f_pos + fp->f_iNode->block_address[blk_start] * BLOCK_SIZE, SEEK_SET);
 		fread(tmp_buf, size, 1, disk_p);
-		cout << *(tmp_buf) << endl;
+		//cout << *(tmp_buf) << endl;
 		free(tmp_buf);
 	}
 	else {
@@ -250,7 +249,7 @@ void get_dir(void *dir_buf, iNode *f_inode)
 		char *buf = (char*)dir_buf;
 		for (int i = 0; i < FBLK_NUM; i++) {
 			fseek(disk_dir, f_inode->block_address[0] * BLOCK_SIZE, SEEK_SET); //定位文件指针
-			fread(buf + i * BLOCK_SIZE, DIR_NUM * sizeof(dir), 1, disk_dir);
+			fread(buf + i * BLOCK_SIZE, BLOCK_SIZE, 1, disk_dir);
 		}
 		//fclose(disk_dir);
 	}
@@ -265,7 +264,7 @@ int alloc_first_free()
 	fseek(fp, BITMAP_START * BLOCK_SIZE, SEEK_SET);
 	fread(bitmap, MAX_BLOCK, 1, fp);
 	for (int i = 0; i < MAX_BLOCK; i++) {
-		cout << (int)(*(bitmap + i)) << " ";
+		//cout << (int)(*(bitmap + i)) << " ";
 		if (*(bitmap + i) == 0) {
 			*(bitmap + i) = 1; //修改bitmap表示该块被占用
 			fseek(fp, BLOCK_SIZE * BITMAP_START, SEEK_SET); //文件指针回到bitmap起点
