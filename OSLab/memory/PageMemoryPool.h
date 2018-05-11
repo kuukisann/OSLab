@@ -1,14 +1,15 @@
 #pragma once
 #include "MemoryPool.h"
 
+
+using namespace std;
+
 struct PageMemStatus {
 	int nPhysicalPage;
 	int nFreePhysicalPage;
 	int nSwapPage;
 	int nFreeSwapPage;
 };
-
-
 
 class PageMemoryPool :
 	public MemoryPool
@@ -49,10 +50,10 @@ private:
 	bool replaceMemPage(int nNeededFreePage);
 
 	//like getBlockContent but use real index
-	bool PageMemoryPool::getBlockContentWithRealIndex(const int blockIndex, void * dst);
+	bool getBlockContentWithRealIndex(const int blockIndex, void * dst);
 
 	//like setBlockContent but use real index
-	bool PageMemoryPool::setBlockContentWithRealIndex(const int blockIndex, const void * src);
+	bool setBlockContentWithRealIndex(const int blockIndex, const void * src);
 
 public:
 	PageMemoryPool(int physicalMemSize, int swapFileSize, int pageSize);

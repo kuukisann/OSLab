@@ -21,7 +21,7 @@ using namespace std;
 
 
 //iNode
-typedef struct INODE{
+typedef struct INODE {
 	unsigned short i_mode;// 文件类型，0目录，1普通 
 	int i_size;//文件大小（字节数） 
 	//int permission;//文件的读、写、执行权限
@@ -31,16 +31,16 @@ typedef struct INODE{
 	int nlinks; //链接数，即有多少文件目录项指向这个inode 判断一个 i节点是否应该被释放
 	int block_address[FBLK_NUM];//文件数据block的位置             
 	int open_num; //0没有被打开，1已经被打开，防止多次打开文件 
-}iNode; 
- 
+}iNode;
+
 //文件目录项结构:当前目录下一系列目录项的列表 
-typedef struct directory{
+typedef struct directory {
 	string file_name;//文件名
 	unsigned int iNode_no; //iNode编号 
 }dir;
 
 //文件的句柄 
-typedef struct OS_FILE{
+typedef struct OS_FILE {
 	//unsigned short f_mode;//文件操作模式（RW位） ------------待定的------------- 
 	//unsigned short f_flag;
 	//unsigned short f_count;//对应文件引用计数值 

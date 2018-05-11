@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../memory/PageMemoryPool.h"
+#include "../filesystem/disk.h"
 
 #include <string>
 #include <iostream>
@@ -16,14 +17,14 @@ private:
 	void Console::InputAnalyse(vector<string> cuttedString);
 	string trim(string str);
 	void InputCut(string input);
-	string workingDir = "/root/";
-	PageMemoryPool mempool = PageMemoryPool(10240, 20480, 32);
-	FileSystem fs = FileSystem(mempool);
+	string workingDir = "/root";
+	PageMemoryPool memPool;
+	//todo
+	ProcessSystem procSys;
 	bool cat(string filename);
-	bool rmfile(string filename);
-	bool rmdir(string filename);
-	bool pwd(string newDir);
-	
+	bool ls();
+	bool mkfile(string filename);
+	bool mkexec(string filename);
 public:
 	bool isExit = false;
 
