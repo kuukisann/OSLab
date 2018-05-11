@@ -69,13 +69,20 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\MySoftware\SDL2-2.0.8\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\MySoftware\SDL2-2.0.8\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -111,6 +118,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="console\Console.cpp" />
+    <ClCompile Include="displayWindow\DisplayWindow.cpp" />
+    <ClCompile Include="log\Log.cpp" />
+    <ClCompile Include="memory\MemoryPool.cpp" />
+    <ClCompile Include="memory\PageMemoryPool.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="console\Console.h" />
+    <ClInclude Include="displayWindow\DisplayWindow.h" />
+    <ClInclude Include="log\Log.h" />
+    <ClInclude Include="memory\MemoryPool.h" />
+    <ClInclude Include="memory\PageMemoryPool.h" />
+    <ClInclude Include="ProcManage\PCB.h" />
+    <ClInclude Include="ProcManage\PM.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

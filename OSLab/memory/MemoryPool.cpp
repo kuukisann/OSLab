@@ -1,4 +1,5 @@
 #include "MemoryPool.h"
+#include "../log/Log.h"
 
 
 MemoryPool::MemoryPool(int physicalMemSize,int swapFileSize)

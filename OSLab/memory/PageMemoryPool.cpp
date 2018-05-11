@@ -1,4 +1,6 @@
 #include "PageMemoryPool.h"
+#include "../log/Log.h"
+
 #include <vector>
 #include <cmath>
 #include <algorithm>
@@ -100,7 +102,7 @@ vector<int> PageMemoryPool::osMalloc(int memSize)
 		{
 			//swap
 			if (!replaceMemPage(nPageNeeded - (freeMemPage.size())))
-
+				Log::w("replace mem page error\n");
 		}
 		for (int i = 0; i < nPageNeeded; i++)
 		{
@@ -121,7 +123,7 @@ vector<int> PageMemoryPool::osMalloc(int memSize)
 	}
 	catch (const std::exception& e)
 	{
-		Log::w("%s", e.what());
+		Log::w("%s\n", e.what());
 		return result;
 	}
 }
