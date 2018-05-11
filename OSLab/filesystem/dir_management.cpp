@@ -53,7 +53,7 @@ bool os_rmdir(string dir_name, string path){
 }
 
 //列出目录下所有文件 设置默认参数是当前目录下的ls 
-vector<string> os_ls(dir* current_dir) {
+vector<string> os_ls() {
 	vector<string> fnames;
 	int i;
 	for (i = 0; i<DIR_NUM && current_dir[i].file_name != "#"; i++) { //根据文件类型做区分（目录文件还是普通文件） 

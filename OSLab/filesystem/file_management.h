@@ -80,7 +80,7 @@ void get_dir(void *dir_buf, iNode *f_iNode);
 //////////////这几个都是在当前目录下的操作，所以进程那边得沟通好/////////////// 
 int os_rm(string f_name, string path); //删除文件
 bool os_rmdir(string dir_name, string path); //删除目录和目录下所有文件
-vector<string> os_ls(dir* current_dir); //列出目录下所有文件
+vector<string> os_ls(); //列出目录下所有文件
 bool os_cd(string &currentpath, string newpath);// 切换目录  上下切换 or 给出全路径自动切换
 
 
