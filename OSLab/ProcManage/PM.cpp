@@ -179,9 +179,6 @@ void PM::scheduleproc()
 			if (i->State == FINISH || i->State == DIED) // 进程在上个时间片已完成
 			{
 				PMP->osFree(i->Mem); // 释放进程内存
-				Close_File(i->procftr); //关闭进程文件
-
-
 				currentnumproc -= i->Size; // 更新内存占用
 				i = readylist.erase(i); // 移出队列 
 				currentnumproc--; // 进程数减1 
@@ -204,8 +201,6 @@ void PM::scheduleproc()
 			if (i->State == DIED) // 进程被Kill
 			{
 				PMP->osFree(i->Mem); // 释放进程内存
-				Close_File(i->procftr); //关闭进程文件
-
 				currentnumproc -= i->Size; // 更新内存占用
 				i = waitlist.erase(i); // 移出队列 
 				currentnumproc--; // 进程数减1 
