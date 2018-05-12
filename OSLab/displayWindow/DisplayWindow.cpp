@@ -17,7 +17,7 @@ DisplayWindow::DisplayWindow(PM *procM, PageMemoryPool *memoryPool) :
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
-	window = SDL_CreateWindow("status", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+	window = SDL_CreateWindow("status", 0, 50,
 		900, 900, SDL_WINDOW_SHOWN);
 	windowSurface = SDL_GetWindowSurface(window);
 	font = TTF_OpenFont("src/Roboto-Regular.ttf", 20);
@@ -58,11 +58,11 @@ void DisplayWindow::refreshWindow()
 
 	string tmpList = "";
 	tmpList += pid;
-	tmpList += string(10 - pid.length(), ' ');
+	tmpList += string(8 - pid.length(), ' ');
 	tmpList += name;
-	tmpList += string(30 - name.length(), ' ');
+	tmpList += string(13 - name.length(), ' ');
 	tmpList += size;
-	tmpList += string(20 - size.length(), ' ');
+	tmpList += string(10 - size.length(), ' ');
 	tmpList += state;
 	tmpList += string(5 - state.length(), ' ');
 	tmpList += prio;
@@ -90,11 +90,11 @@ void DisplayWindow::refreshWindow()
 
 		string tmpList = "";
 		tmpList += pid;
-		tmpList += string(10 - pid.length(), ' ');
+		tmpList += string(8 - pid.length(), ' ');
 		tmpList += name;
-		tmpList += string(30 - name.length(), ' ');
+		tmpList += string(13 - name.length(), ' ');
 		tmpList += size;
-		tmpList += string(20 - size.length(), ' ');
+		tmpList += string(10 - size.length(), ' ');
 		tmpList += state;
 		tmpList += string(5 - state.length(), ' ');
 		tmpList += prio;
@@ -150,9 +150,8 @@ void DisplayWindow::refreshThread()
 {
 	SDL_Event event;
 	int preClock = clock();
-	while (true)
+	while (!isExit)
 	{
-		SDL_WaitEventTimeout(&event, 100);
 		if (clock() - preClock >= 500)
 		{
 			preClock = clock();
