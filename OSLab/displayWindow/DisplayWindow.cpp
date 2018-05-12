@@ -158,4 +158,5 @@ void DisplayWindow::refreshThread()
 			refreshWindow();
 		}
 	}
+	cout << "window thread endded\n";
 }

@@ -43,7 +43,7 @@ class PM
 {
 public:
 	PM() {}
-	PM(PageMemoryPool* p, int t = 0, schedulestrategies s = RR, double tp = 0.5) // 构造函数 默认当前时间0，RR调度算法，时间片为2。
+	PM(PageMemoryPool* p, int t = 0, schedulestrategies s = RR, int tp = 1) // 构造函数 默认当前时间0，RR调度算法，时间片为2。
 	{
 		PMP = p;
 		currenttime = t;
@@ -56,7 +56,7 @@ public:
 		thread runthread(bind(&PM::run, this));
 		runthread.detach();
 	}
-	~PM(){}
+	~PM() {}
 	list<PCB> readylist; //运行及就绪队列 即占用内存的队列
 	list<PCB> waitlist; // 等待队列，在创建过程中由于内存不够等原因而无法进入内存的进程
 
@@ -67,6 +67,7 @@ public:
 	void killproc(unsigned int PID); // 强制结束进程
 	void scheduleproc(); // 调度进程
 	void run();
+	bool isExit = false;
 	vector<PCB_Show> showreadylist();
 	vector<PCB_Show> showwaitlist();
 
@@ -76,7 +77,7 @@ private:
 	int currentnumproc; // 当前进程数 包括 readylist 和 waitlist
 	int currentpagenum; // 当前所有进程已占用页数 即readylist中进程页数和
 	schedulestrategies strategy; // 调度策略
-	double timepiece; // 时间片大小
+	int timepiece; // 时间片大小
 
 	list<PCB>::iterator currentproc;
 

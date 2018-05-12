@@ -336,7 +336,7 @@ vector<PCB_Show> PM::showwaitlist()
 void PM::run()
 {
 	clock_t strat = clock();
-	while (true)
+	while (!isExit)
 	{
 		if (clock() - strat >= timepiece * 1000)
 		{
@@ -345,4 +345,5 @@ void PM::run()
 			//cout << "schedule " << clock() << endl;
 		}
 	}
+	cout << "PM thread endded\n";
 }

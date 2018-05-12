@@ -92,9 +92,9 @@ bool disk_activate()
 			fread((char*)tmp_root + i * BLOCK_SIZE, BLOCK_SIZE, 1, fp);
 		} //读入root_dir
 		current_dir = root_dir;
-		int j = 0;
-		while (iNode_table[j].i_mode != 2) { //初始化时iNode_table置0
-			iNode_table[j].open_num = 0;
+		for (int j = 0; j < iNode_NUM; j++) {
+			if (iNode_table[j].i_mode != 2)
+				iNode_table[j].open_num = 0;
 		}
 		fclose(fp);
 		return true;

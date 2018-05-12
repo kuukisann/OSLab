@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <Windows.h>
 
 using namespace std;
 
@@ -244,6 +245,10 @@ void Console::InputAnalyse(vector<string> args)
 		{
 			isExit = true;
 			disWin.isExit = true;
+			procM.isExit = true;
+			Sleep(2000);
+			disWin.~DisplayWindow();
+			procM.~PM();
 		}
 		else if (command == "rmfile")
 		{
