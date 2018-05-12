@@ -179,7 +179,7 @@ void PM::scheduleproc()
 			if (i->State == FINISH || i->State == DIED) // 进程在上个时间片已完成
 			{
 				PMP->osFree(i->Mem); // 释放进程内存
-				currentnumproc -= i->Size; // 更新内存占用
+				currentpagenum -= i->Size; // 更新内存页数
 				i = readylist.erase(i); // 移出队列 
 				currentnumproc--; // 进程数减1 
 								  //log 进程PCB 已退出内存
@@ -193,15 +193,16 @@ void PM::scheduleproc()
 	}
 
 
-	// 移出waitlist中的DIED进程
+	
 	if (!waitlist.empty())
 	{
+		// 移出waitlist中的DIED进程
 		for (list<PCB>::iterator i = waitlist.begin(); i != waitlist.end();)
 		{
 			if (i->State == DIED) // 进程被Kill
 			{
 				PMP->osFree(i->Mem); // 释放进程内存
-				currentnumproc -= i->Size; // 更新内存占用
+				currentpagenum -= i->Size; // 更新内存页数
 				i = waitlist.erase(i); // 移出队列 
 				currentnumproc--; // 进程数减1 
 								  //log 进程PCB 已退出
