@@ -11,9 +11,9 @@
 using namespace std;
 
 
-Console::Console() :memPool(10240, 20480, 32), procSys(memPool)
+Console::Console() :memPool(10240, 20480, 32), procM(&memPool), disWin(&procM, &memPool)
 {
-
+	disk_activate();
 }
 
 
@@ -171,6 +171,69 @@ bool Console::mkexec(string filename)
 	}
 }
 
+bool Console::ps()
+{
+	vector<PCB_Show> processList = procM.showreadylist();
+
+	PCB_Show* tmppcb = nullptr;
+
+	string pid = "PID";
+	string name = "Name";
+	string size = "MemSize";
+	string state = "State";
+	string prio = "Prio";
+	string serviceTime = "ServiceTime";
+	string runTime = "RunTime";
+
+	string tmpList = "";
+	tmpList += pid;
+	tmpList += string(10 - pid.length(), ' ');
+	tmpList += name;
+	tmpList += string(30 - name.length(), ' ');
+	tmpList += size;
+	tmpList += string(20 - size.length(), ' ');
+	tmpList += state;
+	tmpList += string(5 - state.length(), ' ');
+	tmpList += prio;
+	tmpList += string(10 - prio.length(), ' ');
+	tmpList += serviceTime;
+	tmpList += string(10 - serviceTime.length(), ' ');
+	tmpList += runTime;
+	tmpList += string(10 - runTime.length(), ' ');
+	cout << tmpList << endl;
+
+	for (int i = 0; i < processList.size(); i++)
+	{
+		PCB_Show* tmppcb = &processList[i];
+		pid = to_string(tmppcb->PID);
+		name = tmppcb->Name;
+		size = to_string(tmppcb->Size);
+		state = to_string(tmppcb->State);
+		prio = to_string(tmppcb->Prio);
+		serviceTime = to_string(tmppcb->ServiceTime);
+		runTime = to_string(tmppcb->RunTime);
+
+		string tmpList = "";
+		tmpList += pid;
+		tmpList += string(10 - pid.length(), ' ');
+		tmpList += name;
+		tmpList += string(30 - name.length(), ' ');
+		tmpList += size;
+		tmpList += string(20 - size.length(), ' ');
+		tmpList += state;
+		tmpList += string(5 - state.length(), ' ');
+		tmpList += prio;
+		tmpList += string(10 - prio.length(), ' ');
+		tmpList += serviceTime;
+		tmpList += string(10 - serviceTime.length(), ' ');
+		tmpList += runTime;
+		tmpList += string(10 - runTime.length(), ' ');
+		cout << tmpList << endl;
+	}
+	cout << endl;
+	return true;
+}
+
 void Console::InputAnalyse(vector<string> args)
 {
 	int inPos = 0;
@@ -217,15 +280,15 @@ void Console::InputAnalyse(vector<string> args)
 		}
 		else if (command == "exec")
 		{
-
+			procM.addproc(args[1]);
 		}
 		else if (command == "kill")
 		{
-
+			procM.killproc(stoi(args[1]));
 		}
 		else if (command == "ps")
 		{
-
+			ps();
 		}
 		else if (command == "cat")
 		{
