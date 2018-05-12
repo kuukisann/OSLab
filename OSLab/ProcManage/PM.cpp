@@ -70,7 +70,7 @@ void PM::addproc(string path)
 				p.State = READY;
 				readylist.push_back(p);
 				currentpagenum += p.Size; // 更新内存页数
-					  
+
 				os_fseek(f, 12, OS_SEEK_SET);//第一次初始化指针到数据块开始的位置
 
 				if (datablocksize < PAGESIZE)
@@ -309,9 +309,8 @@ vector<PCB_Show> PM::showreadylist()
 		p.RunTime = i->RunTime;
 		pr.push_back(p);
 	}
-
-	return pr;
 	mu.unlock();
+	return pr;
 }
 
 
@@ -338,8 +337,6 @@ vector<PCB_Show> PM::showwaitlist()
 
 void PM::run()
 {
-	cout << "run success" << endl;
-
 	clock_t strat = clock();
 	while (true)
 	{

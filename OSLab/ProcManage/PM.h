@@ -43,7 +43,7 @@ class PM
 {
 public:
 	PM() {}
-	PM(PageMemoryPool* p, int t = 0, schedulestrategies s = RR, int tp = 2) // 构造函数 默认当前时间0，RR调度算法，时间片为2。
+	PM(PageMemoryPool* p, int t = 0, schedulestrategies s = RR, double tp = 0.5) // 构造函数 默认当前时间0，RR调度算法，时间片为2。
 	{
 		PMP = p;
 		currenttime = t;
@@ -76,10 +76,9 @@ private:
 	int currentnumproc; // 当前进程数 包括 readylist 和 waitlist
 	int currentpagenum; // 当前所有进程已占用页数 即readylist中进程页数和
 	schedulestrategies strategy; // 调度策略
-	int timepiece; // 时间片大小
+	double timepiece; // 时间片大小
 
 	list<PCB>::iterator currentproc;
-	unsigned int currentPID;
 
 	PageMemoryPool* PMP; // 内存池类
 	mutex mu; // 访问readylist和waitlist锁

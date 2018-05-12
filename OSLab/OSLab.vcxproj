@@ -29,7 +29,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -78,6 +78,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -124,6 +125,7 @@
     <ClCompile Include="filesystem\diskIO.cpp" />
     <ClCompile Include="filesystem\file_management.cpp" />
     <ClCompile Include="log\Log.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="memory\MemoryPool.cpp" />
     <ClCompile Include="memory\PageMemoryPool.cpp" />
     <ClCompile Include="ProcManage\PM.cpp" />
@@ -132,7 +134,7 @@
     <ClInclude Include="console\Console.h" />
     <ClInclude Include="displayWindow\DisplayWindow.h" />
     <ClInclude Include="filesystem\disk.h" />
-    <ClInclude Include="filesystem\file_management.h" />
+    <ClInclude Include="file_management.h" />
     <ClInclude Include="log\Log.h" />
     <ClInclude Include="memory\MemoryPool.h" />
     <ClInclude Include="memory\PageMemoryPool.h" />
