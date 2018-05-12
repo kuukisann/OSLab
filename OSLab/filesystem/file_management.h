@@ -1,5 +1,5 @@
 #pragma once
-#pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -7,89 +7,78 @@
 #include <vector>
 using namespace std;
 
-#define Name_length 14 //æ–‡ä»¶åç§°æœ€å¤§é•¿åº¦  
-#define iNode_NUM 256 //iNodeçš„æ•°é‡
-#define DIR_NUM 8 //æ¯ä¸ªç›®å½•æ–‡ä»¶ä¸‹çš„æ–‡ä»¶æœ€å¤§ä¸ªæ•°
-#define PATH_LENGTH 100 //è·¯å¾„å­—ç¬¦ä¸²æœ€å¤§é•¿åº¦ 
-#define MAX_BLOCK 1024 //ç£ç›˜å—æ•°é‡
-#define FBLK_NUM 4 //æ–‡ä»¶ä¸­blockçš„ä¸ªæ•° 
-#define CURRENT_TIME 123  //å½“å‰æ—¶é—´ï¼Œå¾…å®š 
-//æ‰“å¼€æ–‡ä»¶çš„æ¨¡å¼f_mode 
-#define RDONLY 00 //åªè¯»
-#define WRONLY 01 //åªå†™
-#define RDWR 02 //è¯»å†™ 
-
-
+#define Name_length 14	 //ÎÄ¼şÃû³Æ×î´ó³¤¶È
+#define iNode_NUM 256		 //iNodeµÄÊıÁ¿
+#define DIR_NUM 8				 //Ã¿¸öÄ¿Â¼ÎÄ¼şÏÂµÄÎÄ¼ş×î´ó¸öÊı
+#define PATH_LENGTH 100	//Â·¾¶×Ö·û´®×î´ó³¤¶È
+#define MAX_BLOCK 1024	 //´ÅÅÌ¿éÊıÁ¿
+#define FBLK_NUM 4			 //ÎÄ¼şÖĞblockµÄ¸öÊı
+#define CURRENT_TIME 123 //µ±Ç°Ê±¼ä£¬´ı¶¨
+//´ò¿ªÎÄ¼şµÄÄ£Ê½f_mode
+#define RDONLY 00 //Ö»¶Á
+#define WRONLY 01 //Ö»Ğ´
+#define RDWR 02		//¶ÁĞ´
 
 //iNode
-typedef struct INODE {
-	unsigned short i_mode;// æ–‡ä»¶ç±»å‹ï¼Œ0ç›®å½•ï¼Œ1æ™®é€š 
-	int i_size;//æ–‡ä»¶å¤§å°ï¼ˆå­—èŠ‚æ•°ï¼‰ 
-			   //int permission;//æ–‡ä»¶çš„è¯»ã€å†™ã€æ‰§è¡Œæƒé™
-			   /*int ctime; //æ–‡ä»¶çš„æ—¶é—´æˆ³ï¼Œinodeä¸Šä¸€æ¬¡å˜åŠ¨çš„æ—¶é—´
-			   int mtime; //æ–‡ä»¶çš„æ—¶é—´æˆ³ï¼Œæ–‡ä»¶å†…å®¹ä¸Šä¸€æ¬¡å˜åŠ¨çš„æ—¶é—´
-			   int atime;//æ–‡ä»¶çš„æ—¶é—´æˆ³ï¼Œæ–‡ä»¶ä¸Šä¸€æ¬¡æ‰“å¼€çš„æ—¶é—´ã€‚*/
-	int nlinks; //é“¾æ¥æ•°ï¼Œå³æœ‰å¤šå°‘æ–‡ä»¶ç›®å½•é¡¹æŒ‡å‘è¿™ä¸ªinode åˆ¤æ–­ä¸€ä¸ª ièŠ‚ç‚¹æ˜¯å¦åº”è¯¥è¢«é‡Šæ”¾
-	int block_address[FBLK_NUM];//æ–‡ä»¶æ•°æ®blockçš„ä½ç½®             
-	int open_num; //0æ²¡æœ‰è¢«æ‰“å¼€ï¼Œ1å·²ç»è¢«æ‰“å¼€ï¼Œé˜²æ­¢å¤šæ¬¡æ‰“å¼€æ–‡ä»¶ 
-}iNode;
+typedef struct INODE
+{
+	unsigned short i_mode;			 // ÎÄ¼şÀàĞÍ£¬0Ä¿Â¼£¬1ÆÕÍ¨
+	int i_size;									 //ÎÄ¼ş´óĞ¡£¨×Ö½ÚÊı£©
+												 //int permission;//ÎÄ¼şµÄ¶Á¡¢Ğ´¡¢Ö´ĞĞÈ¨ÏŞ
+												 /*int ctime; //ÎÄ¼şµÄÊ±¼ä´Á£¬inodeÉÏÒ»´Î±ä¶¯µÄÊ±¼ä
+												 int mtime; //ÎÄ¼şµÄÊ±¼ä´Á£¬ÎÄ¼şÄÚÈİÉÏÒ»´Î±ä¶¯µÄÊ±¼ä
+												 int atime;//ÎÄ¼şµÄÊ±¼ä´Á£¬ÎÄ¼şÉÏÒ»´Î´ò¿ªµÄÊ±¼ä¡£*/
+	int nlinks;									 //Á´½ÓÊı£¬¼´ÓĞ¶àÉÙÎÄ¼şÄ¿Â¼ÏîÖ¸ÏòÕâ¸öinode ÅĞ¶ÏÒ»¸ö i½ÚµãÊÇ·ñÓ¦¸Ã±»ÊÍ·Å
+	int block_address[FBLK_NUM]; //ÎÄ¼şÊı¾İblockµÄÎ»ÖÃ
+	int open_num;								 //0Ã»ÓĞ±»´ò¿ª£¬1ÒÑ¾­±»´ò¿ª£¬·ÀÖ¹¶à´Î´ò¿ªÎÄ¼ş
+} iNode;
 
-//æ–‡ä»¶ç›®å½•é¡¹ç»“æ„:å½“å‰ç›®å½•ä¸‹ä¸€ç³»åˆ—ç›®å½•é¡¹çš„åˆ—è¡¨ 
-typedef struct directory {
-	string file_name;//æ–‡ä»¶å
-	unsigned int iNode_no; //iNodeç¼–å· 
-}dir;
+//ÎÄ¼şÄ¿Â¼Ïî½á¹¹:µ±Ç°Ä¿Â¼ÏÂÒ»ÏµÁĞÄ¿Â¼ÏîµÄÁĞ±í
+typedef struct directory
+{
+	string file_name;			 //ÎÄ¼şÃû
+	unsigned int iNode_no; //iNode±àºÅ
+} dir;
 
-//æ–‡ä»¶çš„å¥æŸ„ 
-typedef struct OS_FILE {
-	//unsigned short f_mode;//æ–‡ä»¶æ“ä½œæ¨¡å¼ï¼ˆRWä½ï¼‰ ------------å¾…å®šçš„------------- 
+//ÎÄ¼şµÄ¾ä±ú
+typedef struct OS_FILE
+{
+	//unsigned short f_mode;//ÎÄ¼ş²Ù×÷Ä£Ê½£¨RWÎ»£© ------------´ı¶¨µÄ-------------
 	//unsigned short f_flag;
-	//unsigned short f_count;//å¯¹åº”æ–‡ä»¶å¼•ç”¨è®¡æ•°å€¼ 
-	iNode *f_iNode;//æŒ‡å‘å¯¹åº”iNode 
-	long int f_pos;//è¯»æŒ‡é’ˆ 
-}os_file;
+	//unsigned short f_count;//¶ÔÓ¦ÎÄ¼şÒıÓÃ¼ÆÊıÖµ
+	iNode *f_iNode; //Ö¸Ïò¶ÔÓ¦iNode
+	long int f_pos; //¶ÁÖ¸Õë
+} os_file;
 
-////å…¨å±€å˜é‡
-extern iNode iNode_table[iNode_NUM];//iNode tableçš„æ•°ç»„ï¼Œæ•°ç»„ä¸‹æ ‡å¯¹åº”iNodeç¼–å· 
-extern dir root_dir[DIR_NUM];//æ ¹ç›®å½• æ•°ç»„å®ç°  å¾€ä¸‹çš„æ¯ä¸ªå­ç›®å½•ä¹Ÿæ˜¯dirç±»å‹çš„æ•°ç»„ï¼Œæ¯ä¸€é¡¹æ˜¯ä¸€ä¸ªæ–‡ä»¶ç›®å½•é¡¹ 
-extern dir* current_dir;//ä¿å­˜æ¯æ¬¡æ›´æ–°analyse_pathè¿”å›çš„diræ•°ç»„ï¼Œå³å½“å‰ç›®å½•çš„diræ•°ç»„ 
+////È«¾Ö±äÁ¿
+extern iNode iNode_table[iNode_NUM]; //iNode tableµÄÊı×é£¬Êı×éÏÂ±ê¶ÔÓ¦iNode±àºÅ
+extern dir root_dir[DIR_NUM];				 //¸ùÄ¿Â¼ Êı×éÊµÏÖ  ÍùÏÂµÄÃ¿¸ö×ÓÄ¿Â¼Ò²ÊÇdirÀàĞÍµÄÊı×é£¬Ã¿Ò»ÏîÊÇÒ»¸öÎÄ¼şÄ¿Â¼Ïî
+extern dir *current_dir;						 //±£´æÃ¿´Î¸üĞÂanalyse_path·µ»ØµÄdirÊı×é£¬¼´µ±Ç°Ä¿Â¼µÄdirÊı×é
 
-void init_iNode(iNode* blankiNode); //iNodeåˆå§‹åŒ–å‡½æ•°
-void format_iNode(iNode* blankiNode); //iNodeæ ¼å¼åŒ–å‡½æ•° 
-void init_dir(dir blankdir[]); //diræ•°ç»„åˆå§‹åŒ–å‡½æ•° 
+void init_iNode(iNode *blankiNode);		//iNode³õÊ¼»¯º¯Êı
+void format_iNode(iNode *blankiNode); //iNode¸ñÊ½»¯º¯Êı
+void init_dir(dir blankdir[]);				//dirÊı×é³õÊ¼»¯º¯Êı
 
-							   //string path;//è®°å½•è·¯å¾„ 
+											//string path;//¼ÇÂ¼Â·¾¶
 
-iNode* Create_File(string pathname, string cur_path, unsigned short f_type); //åˆ›å»ºæ–‡ä»¶ è¿”å›ç±»å‹å…ˆæš‚å®š 
-int Delete_File(string f_name, int f_i, string path); //åˆ é™¤æ–‡ä»¶ rm filename (è¿”å›å€¼ï¼šæˆåŠŸ0ï¼Œå¤±è´¥-1) 
-os_file* Open_File(string f_name); //æ‰“å¼€æ–‡ä»¶ 
-void Close_File(os_file	*f); //å…³é—­æ–‡ä»¶ 
+iNode *Create_File(string pathname, string cur_path, unsigned short f_type); //´´½¨ÎÄ¼ş ·µ»ØÀàĞÍÏÈÔİ¶¨
+int Delete_File(string f_name, int f_i, string path);												 //É¾³ıÎÄ¼ş rm filename (·µ»ØÖµ£º³É¹¦0£¬Ê§°Ü-1)
+os_file *Open_File(string f_name);																					 //´ò¿ªÎÄ¼ş
+void Close_File(os_file *f);																								 //¹Ø±ÕÎÄ¼ş
 
-unsigned int dirlookup(string son_name, dir *father);//æ ¹æ®å­åç§°ï¼Œæ‰¾åˆ°å­iNodeç¼–å· 
-unsigned int get_empty_iNode(); //æ‰¾åˆ°ç©ºé—²çš„iNode,è¿”å›ç¼–å·ï¼ˆæ•°ç»„ä¸‹æ ‡ï¼‰ 
-iNode Fill_in_iNode(unsigned short f_type);//å®Œå–„iNodeä¿¡æ¯ 
-dir* analyse_Path(string path, int *i_no);//è§£æè·¯å¾„ï¼Œä»å·¦åˆ°å³æ‰¾åˆ°å½“å‰ç›®å½•/æ–‡ä»¶åç§° 
-int find_dir_no(string f_name); //ä»current_dirä¸­æŸ¥æ‰¾è¯¥æ–‡ä»¶çš„diråœ¨ç›®å½•çš„æ•°ç»„ä¸‹æ ‡ 
+unsigned int dirlookup(string son_name, dir *father); //¸ù¾İ×ÓÃû³Æ£¬ÕÒµ½×ÓiNode±àºÅ
+unsigned int get_empty_iNode();												//ÕÒµ½¿ÕÏĞµÄiNode,·µ»Ø±àºÅ£¨Êı×éÏÂ±ê£©
+iNode Fill_in_iNode(unsigned short f_type);						//ÍêÉÆiNodeĞÅÏ¢
+dir *analyse_Path(string path, int *i_no);						//½âÎöÂ·¾¶£¬´Ó×óµ½ÓÒÕÒµ½µ±Ç°Ä¿Â¼/ÎÄ¼şÃû³Æ
+int find_dir_no(string f_name);												//´Ócurrent_dirÖĞ²éÕÒ¸ÃÎÄ¼şµÄdirÔÚÄ¿Â¼µÄÊı×éÏÂ±ê
 void get_dir(void *dir_buf, iNode *f_iNode);
 
-//åˆ›å»ºç›®å½•æ–‡ä»¶ mkdir dirName  è°ƒç”¨Create_File 
-//åˆ é™¤æ™®é€šæ–‡ä»¶ rm filename è°ƒç”¨Delete_File 
-//åˆ é™¤ç›®å½•å’Œç›®å½•ä¸‹æ‰€æœ‰æ–‡ä»¶ rmdir dirName  è°ƒç”¨os_rmdir()
+//´´½¨Ä¿Â¼ÎÄ¼ş mkdir dirName  µ÷ÓÃCreate_File
+//É¾³ıÆÕÍ¨ÎÄ¼ş rm filename µ÷ÓÃDelete_File
+//É¾³ıÄ¿Â¼ºÍÄ¿Â¼ÏÂËùÓĞÎÄ¼ş rmdir dirName  µ÷ÓÃos_rmdir()
 
-
-
-//////////////è¿™å‡ ä¸ªéƒ½æ˜¯åœ¨å½“å‰ç›®å½•ä¸‹çš„æ“ä½œï¼Œæ‰€ä»¥è¿›ç¨‹é‚£è¾¹å¾—æ²Ÿé€šå¥½/////////////// 
-int os_rm(string f_name, string path); //åˆ é™¤æ–‡ä»¶
-bool os_rmdir(string dir_name, string path); //åˆ é™¤ç›®å½•å’Œç›®å½•ä¸‹æ‰€æœ‰æ–‡ä»¶
-vector<string> os_ls(); //åˆ—å‡ºç›®å½•ä¸‹æ‰€æœ‰æ–‡ä»¶
-<<<<<<< HEAD
-bool os_cd(string &currentpath, string newpath);// åˆ‡æ¢ç›®å½•  ä¸Šä¸‹åˆ‡æ¢ or ç»™å‡ºå…¨è·¯å¾„è‡ªåŠ¨åˆ‡æ¢
-=======
-bool os_cd(string &currentpath, string newpath);// åˆ‡æ¢ç›®å½•  ä¸Šä¸‹åˆ‡æ¢ or ç»™å‡ºå…¨è·¯å¾„è‡ªåŠ¨åˆ‡æ¢
-
-
-//ä»ä¸Šä¸€æ¬¡åè¯»å–sizeå­—èŠ‚çš„æ–‡ä»¶å†…å®¹
-//ä»å¤´å¼€å§‹è¯»å–sizeå­—èŠ‚çš„æ–‡ä»¶å†…å®¹
-//ä»æ–‡ä»¶å°¾å†™å…¥å†…å®¹
-//æ¸…ç©ºæ–‡ä»¶ï¼Œä»å¤´å†™å…¥
->>>>>>> 265bfe81ac54763d4bbf36946b667680909fafcb
+//////////////Õâ¼¸¸ö¶¼ÊÇÔÚµ±Ç°Ä¿Â¼ÏÂµÄ²Ù×÷£¬ËùÒÔ½ø³ÌÄÇ±ßµÃ¹µÍ¨ºÃ///////////////
+int os_rm(string f_name, string path);					 //É¾³ıÎÄ¼ş
+bool os_rmdir(string dir_name, string path);		 //É¾³ıÄ¿Â¼ºÍÄ¿Â¼ÏÂËùÓĞÎÄ¼ş
+vector<string> os_ls();													 //ÁĞ³öÄ¿Â¼ÏÂËùÓĞÎÄ¼ş
+bool os_cd(string &currentpath, string newpath); // ÇĞ»»Ä¿Â¼  ÉÏÏÂÇĞ»» or ¸ø³öÈ«Â·¾¶×Ô¶¯ÇĞ»»

@@ -8,12 +8,8 @@
 
 using namespace std;
 
-struct PageMemStatus {
-	int nPhysicalPage;
-	int nFreePhysicalPage;
-	int nSwapPage;
-	int nFreeSwapPage;
-};
+SDL_Color textColor = { 255,255,255 };
+SDL_Color bgColor = { 0,0,0 };
 
 
 DisplayWindow::DisplayWindow(PM *procM, PageMemoryPool *memoryPool) :
@@ -43,13 +39,43 @@ DisplayWindow::~DisplayWindow()
 
 void DisplayWindow::refreshWindow()
 {
+	SDL_Surface* textLine = nullptr;
+
 	//clear window
 	SDL_FillRect(windowSurface, NULL, SDL_MapRGB(windowSurface->format, 0, 0, 0));
 
 	//refresh ps
 
-	//todo: get message with ps
 	SDL_Rect psRect = { 30,30,840,540 };
+
+	string pid = "PID";
+	string name = "Name";
+	string size = "MemSize";
+	string state = "State";
+	string prio = "Prio";
+	string serviceTime = "ServiceTime";
+	string runTime = "RunTime";
+
+	string tmpList = "";
+	tmpList += pid;
+	tmpList += string(10 - pid.length(), ' ');
+	tmpList += name;
+	tmpList += string(30 - name.length(), ' ');
+	tmpList += size;
+	tmpList += string(20 - size.length(), ' ');
+	tmpList += state;
+	tmpList += string(5 - state.length(), ' ');
+	tmpList += prio;
+	tmpList += string(10 - prio.length(), ' ');
+	tmpList += serviceTime;
+	tmpList += string(15 - serviceTime.length(), ' ');
+	tmpList += runTime;
+	tmpList += string(10 - runTime.length(), ' ');
+
+	textLine = TTF_RenderText_Blended(font, tmpList.c_str(), textColor);
+	SDL_BlitSurface(textLine, NULL, windowSurface, &psRect);
+	psRect.y += 30;
+
 	vector<PCB_Show> processList = procM->showreadylist();
 	for (int i = 0; i < processList.size() && i < 18; i++)
 	{
@@ -74,10 +100,10 @@ void DisplayWindow::refreshWindow()
 		tmpList += prio;
 		tmpList += string(10 - prio.length(), ' ');
 		tmpList += serviceTime;
-		tmpList += string(10 - serviceTime.length(), ' ');
+		tmpList += string(15 - serviceTime.length(), ' ');
 		tmpList += runTime;
 		tmpList += string(10 - runTime.length(), ' ');
-		SDL_Surface* textLine = TTF_RenderText_Solid(font, tmpList.c_str(), SDL_Color{ 255,255,255 });
+		textLine = TTF_RenderText_Blended(font, tmpList.c_str(), textColor);
 		SDL_BlitSurface(textLine, NULL, windowSurface, &psRect);
 		psRect.y += 30;
 	}
@@ -89,19 +115,19 @@ void DisplayWindow::refreshWindow()
 	SDL_Rect memRect = { 30,630,240,240 };
 	PageMemStatus memStatus = memPool->getMemStatus();
 	string tmpStr = "nPhysicalPage: " + to_string(memStatus.nPhysicalPage);
-	SDL_Surface* textLine = TTF_RenderText_Solid(font, tmpStr.c_str(), SDL_Color{ 255,255,255 });
+	textLine = TTF_RenderText_Blended(font, tmpStr.c_str(), textColor);
 	SDL_BlitSurface(textLine, NULL, windowSurface, &memRect);
 	memRect.y += 30;
 	tmpStr = "nSwapPage: " + to_string(memStatus.nSwapPage);
-	SDL_Surface* textLine = TTF_RenderText_Solid(font, tmpStr.c_str(), SDL_Color{ 255,255,255 });
+	textLine = TTF_RenderText_Blended(font, tmpStr.c_str(), textColor);
 	SDL_BlitSurface(textLine, NULL, windowSurface, &memRect);
 	memRect.y += 30;
 	tmpStr = "nFreePhysicalPage: " + to_string(memStatus.nFreePhysicalPage);
-	SDL_Surface* textLine = TTF_RenderText_Solid(font, tmpStr.c_str(), SDL_Color{ 255,255,255 });
+	textLine = TTF_RenderText_Blended(font, tmpStr.c_str(), textColor);
 	SDL_BlitSurface(textLine, NULL, windowSurface, &memRect);
 	memRect.y += 30;
 	tmpStr = "nFreeSwapPage: " + to_string(memStatus.nFreeSwapPage);
-	SDL_Surface* textLine = TTF_RenderText_Solid(font, tmpStr.c_str(), SDL_Color{ 255,255,255 });
+	textLine = TTF_RenderText_Blended(font, tmpStr.c_str(), textColor);
 	SDL_BlitSurface(textLine, NULL, windowSurface, &memRect);
 	memRect.y += 30;
 
@@ -112,7 +138,7 @@ void DisplayWindow::refreshWindow()
 	vector<string> fileList = os_ls();
 	for (int i = 0; i < fileList.size() && i < 8; i++)
 	{
-		SDL_Surface* textLine = TTF_RenderText_Solid(font, fileList[i].c_str(), SDL_Color{ 255,255,255 });
+		textLine = TTF_RenderText_Blended(font, fileList[i].c_str(), textColor);
 		SDL_BlitSurface(textLine, NULL, windowSurface, &fileRect);
 		fileRect.y += 30;
 	}
@@ -122,9 +148,11 @@ void DisplayWindow::refreshWindow()
 
 void DisplayWindow::refreshThread()
 {
+	SDL_Event event;
 	int preClock = clock();
 	while (true)
 	{
+		SDL_WaitEventTimeout(&event, 100);
 		if (clock() - preClock >= 500)
 		{
 			preClock = clock();

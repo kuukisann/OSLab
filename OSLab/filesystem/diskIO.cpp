@@ -186,6 +186,7 @@ int os_fread(void *v_buf, int size, os_file *fp)
 	}
 	fclose(disk_in);
 	//v_buf = (void*)buf;
+	return 1;
 }
 //文件写函数
 int os_fwrite(void *v_buf, int size, os_file *fp)
@@ -252,6 +253,7 @@ int os_fwrite(void *v_buf, int size, os_file *fp)
 	fp->f_iNode->i_size += size; //更新文件大小
 	fclose(disk_p); //关闭磁盘读写
 	free(buf);
+	return 1;
 }
 //文件指针定位
 int os_fseek(os_file *fp, int off_set, int flag)
