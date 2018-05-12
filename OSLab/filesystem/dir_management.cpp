@@ -28,7 +28,10 @@ bool os_rmdir(string dir_name, string path){
 	int f_i = find_dir_no(dir_name);//找到了要删除的文件目录项 
 	if(f_i == DIR_NUM+1)
 		return 0; 
-	//////////////////	 
+	//////////////////	
+	if (iNode_table[(*(current_dir + f_i)).iNode_no].i_mode == 1) {
+		return 0; //普通文件，错误
+	}
 	dir* f_dir = (dir*)malloc(sizeof(dir)*DIR_NUM);
 	get_dir(f_dir, &iNode_table[(*(current_dir+f_i)).iNode_no]);//传入iNode结点，返回文件的dir数组
 	int i;
@@ -64,8 +67,9 @@ vector<string> os_ls() {
 
 //切换目录 
 bool os_cd(string &currentpath, string newpath) {//currentpath:绝对路径，newpath:绝对or相对 
+	int tmp_no = -1;
 	if (newpath[0] == '/') {//绝对路径 
-		dir* temp = analyse_Path(newpath);
+		dir* temp = analyse_Path(newpath, &tmp_no);
 		if (temp == NULL)
 			return 0;
 		current_dir = temp;
@@ -75,7 +79,7 @@ bool os_cd(string &currentpath, string newpath) {//currentpath:绝对路径，ne
 		if (newpath == "..") { //返回上级目录 /a/b/c ->/a/b
 			int pos = currentpath.rfind('/');
 			if (pos != 0) {//根目录不能向上切换，无操作 
-				dir* temp = analyse_Path(currentpath.substr(0, pos));
+				dir* temp = analyse_Path(currentpath.substr(0, pos), &tmp_no);
 				if (temp == NULL)
 					return 0;
 				current_dir = temp;
@@ -85,8 +89,8 @@ bool os_cd(string &currentpath, string newpath) {//currentpath:绝对路径，ne
 		else {//相对路径 /a/b/c -> /a/b/c / d   /a/b/c -> /a/b/c /d/e
 			int f_i;
 			if (newpath.rfind('/') != string::npos) { //相对路径大于一层 
-				newpath = '/' + newpath; //前面补上'/'
-				dir* temp = analyse_Path(newpath);
+				//newpath = '/' + newpath; //前面补上'/'
+				dir* temp = analyse_Path(currentpath+'/'+newpath, &tmp_no);
 				if (temp == NULL)
 					return 0;
 				current_dir = temp;
