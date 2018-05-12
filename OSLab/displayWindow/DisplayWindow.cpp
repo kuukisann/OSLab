@@ -1,21 +1,12 @@
 #include "DisplayWindow.h"
 #include "../log/Log.h"
 #include "../filesystem/disk.h"
+#include "../ProcManage/PM.h"
 #include <string>
 #include <vector>
+#include <ctime>
 
 using namespace std;
-
-struct PCB_Show
-{
-	unsigned int pid; //进程PID
-	string name; // 进程名称
-	int size; //进程占用内存块大小
-	enum procstate { NEW, READY, RUN, WAITING, FINISH } state;  //进程状态
-	unsigned int prio;//优先级
-	int serviceTime;//进程服务时间
-	int runTime;//已经占用CPU时间
-};
 
 struct PageMemStatus {
 	int nPhysicalPage;
@@ -25,7 +16,8 @@ struct PageMemStatus {
 };
 
 
-DisplayWindow::DisplayWindow(ProcSys *procSys, PageMemoryPool *memoryPool) :procSys(procSys), memPool(memoryPool)
+DisplayWindow::DisplayWindow(PM *procM, PageMemoryPool *memoryPool) :
+	procM(procM), memPool(memoryPool)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
@@ -35,13 +27,17 @@ DisplayWindow::DisplayWindow(ProcSys *procSys, PageMemoryPool *memoryPool) :proc
 	font = TTF_OpenFont("src/Roboto-Regular.ttf", 20);
 	if (!font)
 	{
-		//Log::w("font open error\n");
+		Log::w("font open error\n");
 	}
+	thread refreshT(bind(&DisplayWindow::refreshThread, this));
+	refreshT.detach();
 }
 
 
 DisplayWindow::~DisplayWindow()
 {
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 }
 
 
@@ -54,34 +50,34 @@ void DisplayWindow::refreshWindow()
 
 	//todo: get message with ps
 	SDL_Rect psRect = { 30,30,840,540 };
-	vector<PCB_Show> processList = vector<PCB_Show>();
+	vector<PCB_Show> processList = procM->showreadylist();
 	for (int i = 0; i < processList.size() && i < 18; i++)
 	{
 		PCB_Show* tmppcb = &processList[i];
-		string pid = to_string(tmppcb->pid);
-		string name = tmppcb->name;
-		string size = to_string(tmppcb->size);
-		string state = to_string(tmppcb->state);
-		string prio = to_string(tmppcb->prio);
-		string serviceTime = to_string(tmppcb->serviceTime);
-		string runTime = to_string(tmppcb->runTime);
+		string pid = to_string(tmppcb->PID);
+		string name = tmppcb->Name;
+		string size = to_string(tmppcb->Size);
+		string state = to_string(tmppcb->State);
+		string prio = to_string(tmppcb->Prio);
+		string serviceTime = to_string(tmppcb->ServiceTime);
+		string runTime = to_string(tmppcb->RunTime);
 
-		string tmpLIst = "";
-		tmpLIst += pid;
-		tmpLIst += string(10 - pid.length(), ' ');
-		tmpLIst += name;
-		tmpLIst += string(30 - name.length(), ' ');
-		tmpLIst += size;
-		tmpLIst += string(20 - size.length(), ' ');
-		tmpLIst += state;
-		tmpLIst += string(5 - state.length(), ' ');
-		tmpLIst += prio;
-		tmpLIst += string(10 - prio.length(), ' ');
-		tmpLIst += serviceTime;
-		tmpLIst += string(10 - serviceTime.length(), ' ');
-		tmpLIst += runTime;
-		tmpLIst += string(10 - runTime.length(), ' ');
-		SDL_Surface* textLine = TTF_RenderText_Solid(font, tmpLIst.c_str(), SDL_Color{ 255,255,255 });
+		string tmpList = "";
+		tmpList += pid;
+		tmpList += string(10 - pid.length(), ' ');
+		tmpList += name;
+		tmpList += string(30 - name.length(), ' ');
+		tmpList += size;
+		tmpList += string(20 - size.length(), ' ');
+		tmpList += state;
+		tmpList += string(5 - state.length(), ' ');
+		tmpList += prio;
+		tmpList += string(10 - prio.length(), ' ');
+		tmpList += serviceTime;
+		tmpList += string(10 - serviceTime.length(), ' ');
+		tmpList += runTime;
+		tmpList += string(10 - runTime.length(), ' ');
+		SDL_Surface* textLine = TTF_RenderText_Solid(font, tmpList.c_str(), SDL_Color{ 255,255,255 });
 		SDL_BlitSurface(textLine, NULL, windowSurface, &psRect);
 		psRect.y += 30;
 	}
@@ -122,4 +118,17 @@ void DisplayWindow::refreshWindow()
 	}
 
 	SDL_UpdateWindowSurface(window);
+}
+
+void DisplayWindow::refreshThread()
+{
+	int preClock = clock();
+	while (true)
+	{
+		if (clock() - preClock >= 500)
+		{
+			preClock = clock();
+			refreshWindow();
+		}
+	}
 }

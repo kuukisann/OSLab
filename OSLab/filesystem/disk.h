@@ -40,6 +40,8 @@ typedef struct super_block {  //超级块结构
 bool disk_format();
 //磁盘初始化，初始化MBR，super_block，inode_table等部分，成功返回True
 bool disk_init();
+//磁盘启动，读入系统所需的各个参数
+bool disk_activate();
 //物理块写入函数，buf应为256字节大小的数据块
 bool block_write(long block, char *buf);
 //物理块读入函数，返回读入的字节大小

@@ -10,6 +10,7 @@
 using namespace std;
 
 
+
 #define MAXMEMORYSIZE 10240//物理内存(Bytes)  10MB
 #define PAGESIZE 32//页大小(Bytes) 
 #define MAXSWAPFILESIZE 20480 //最大分页文件大小 20MB

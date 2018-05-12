@@ -36,7 +36,7 @@ bool disk_init()
 	for (int i = 0; i < iNode_NUM; i++) {
 		init_iNode(i_table + i);
 	}
-
+	
 	//bitmap初始化
 	char *bit_map = (char*)malloc(MAX_BLOCK);
 	int cannot_use = DATA_START - 1; //无法使用的块编号（从0开始）
@@ -46,6 +46,15 @@ bool disk_init()
 		else
 			*(bit_map + i) = 0;
 	}
+	//root_dir初始化
+	dir root[DIR_NUM];
+	init_dir(root);
+	iNode root_iNode = Fill_in_iNode(0);
+	for (int i = 0; i < FBLK_NUM; i++) {
+		root_iNode.block_address[i] = cannot_use + 1 + i;
+		*(bit_map + cannot_use + i + 1) = 1;
+	}
+	*i_table = root_iNode;
 	//写入磁盘
 	FILE *disk = fopen(DEV_NAME, "rb+"); //以读写方式打开文件，不会清空文件
 	fwrite(sb, sizeof(super_block), 1, disk); //写入超级块内容
@@ -53,6 +62,10 @@ bool disk_init()
 	fwrite(i_table, sizeof(iNode) * iNode_NUM, 1, disk); //写入inode_table
 	fseek(disk, BITMAP_START * BLOCK_SIZE, SEEK_SET);
 	fwrite(bit_map, MAX_BLOCK, 1, disk); //写入bitmap
+	for (int i = 0; i < FBLK_NUM; i++) {
+		fseek(disk, root_iNode.block_address[i] * BLOCK_SIZE, SEEK_SET);
+		fwrite((char*)root + i * BLOCK_SIZE, BLOCK_SIZE, 1, disk);
+	} //root_dir写入磁盘
 	//测试
 	char *bp = (char*)malloc(MAX_BLOCK);
 	fseek(disk, BITMAP_START * BLOCK_SIZE, SEEK_SET);
@@ -66,6 +79,27 @@ bool disk_init()
 	fclose(disk);
 	return true;
 }
+
+bool disk_activate()
+{
+	dir *tmp_root = root_dir;
+	FILE *fp = fopen(DEV_NAME, "rb");
+	if (fp) {
+		fseek(fp, INODE_START * BLOCK_SIZE, SEEK_SET);
+		fread(&iNode_table, iNode_NUM * sizeof(iNode), 1, fp);//读入iNode_table
+		for (int i = 0; i < FBLK_NUM; i++) {
+			fseek(fp, iNode_table[0].block_address[i] * BLOCK_SIZE, SEEK_SET);
+			fread((char*)tmp_root + i * BLOCK_SIZE, BLOCK_SIZE, 1, fp);
+		} //读入root_dir
+		current_dir = root_dir;
+		fclose(fp);
+		return true;
+	}
+	else
+		return false;
+}
+
+
 
 //整块逻辑块写入物理块
 bool block_write(long block, char *buf)
@@ -248,7 +282,7 @@ void get_dir(void *dir_buf, iNode *f_inode)
 	if (disk_dir) {
 		char *buf = (char*)dir_buf;
 		for (int i = 0; i < FBLK_NUM; i++) {
-			fseek(disk_dir, f_inode->block_address[0] * BLOCK_SIZE, SEEK_SET); //定位文件指针
+			fseek(disk_dir, f_inode->block_address[i] * BLOCK_SIZE, SEEK_SET); //定位文件指针
 			fread(buf + i * BLOCK_SIZE, BLOCK_SIZE, 1, disk_dir);
 		}
 		//fclose(disk_dir);
@@ -292,7 +326,7 @@ int free_block(int blk)
 	}
 	*(bitmap + blk) = 0; //bitmap置0
 	fseek(fp, BLOCK_SIZE * BITMAP_START, SEEK_SET); //指针准备写入bitmap
-	fwrite(bitmap, MAX_BLOCK * BITMAP_START, 1, fp); //将bitmap写回磁盘
+	fwrite(bitmap, MAX_BLOCK, 1, fp); //将bitmap写回磁盘
 	fseek(fp, BLOCK_SIZE * blk, SEEK_SET); //将指针移动到要格式化的磁盘块位置
 	fwrite(blk_format, BLOCK_SIZE, 1, fp); //磁盘块格式化，相当于释放
 	free(bitmap);

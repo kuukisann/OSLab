@@ -30,6 +30,18 @@
     <ClCompile Include="log\Log.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ProcManage\PM.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="filesystem\dir_management.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="filesystem\diskIO.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="filesystem\file_management.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ProcManage\PCB.h">
@@ -51,6 +63,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="console\Console.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="filesystem\disk.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="filesystem\file_management.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

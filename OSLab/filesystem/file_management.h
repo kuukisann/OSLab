@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -24,10 +25,10 @@ using namespace std;
 typedef struct INODE {
 	unsigned short i_mode;// 文件类型，0目录，1普通 
 	int i_size;//文件大小（字节数） 
-	//int permission;//文件的读、写、执行权限
-	/*int ctime; //文件的时间戳，inode上一次变动的时间
-	int mtime; //文件的时间戳，文件内容上一次变动的时间
-	int atime;//文件的时间戳，文件上一次打开的时间。*/
+			   //int permission;//文件的读、写、执行权限
+			   /*int ctime; //文件的时间戳，inode上一次变动的时间
+			   int mtime; //文件的时间戳，文件内容上一次变动的时间
+			   int atime;//文件的时间戳，文件上一次打开的时间。*/
 	int nlinks; //链接数，即有多少文件目录项指向这个inode 判断一个 i节点是否应该被释放
 	int block_address[FBLK_NUM];//文件数据block的位置             
 	int open_num; //0没有被打开，1已经被打开，防止多次打开文件 
@@ -57,17 +58,17 @@ void init_iNode(iNode* blankiNode); //iNode初始化函数
 void format_iNode(iNode* blankiNode); //iNode格式化函数 
 void init_dir(dir blankdir[]); //dir数组初始化函数 
 
-//string path;//记录路径 
+							   //string path;//记录路径 
 
-iNode* Create_File(string pathname, unsigned short f_type); //创建文件 返回类型先暂定 
+iNode* Create_File(string pathname, string cur_path, unsigned short f_type); //创建文件 返回类型先暂定 
 int Delete_File(string f_name, int f_i, string path); //删除文件 rm filename (返回值：成功0，失败-1) 
 os_file* Open_File(string f_name); //打开文件 
 void Close_File(os_file	*f); //关闭文件 
 
-unsigned int dirlookup(string son_name, dir father[]);//根据子名称，找到子iNode编号 
+unsigned int dirlookup(string son_name, dir *father);//根据子名称，找到子iNode编号 
 unsigned int get_empty_iNode(); //找到空闲的iNode,返回编号（数组下标） 
 iNode Fill_in_iNode(unsigned short f_type);//完善iNode信息 
-dir* analyse_Path(string path);//解析路径，从左到右找到当前目录/文件名称 
+dir* analyse_Path(string path, int *i_no);//解析路径，从左到右找到当前目录/文件名称 
 int find_dir_no(string f_name); //从current_dir中查找该文件的dir在目录的数组下标 
 void get_dir(void *dir_buf, iNode *f_iNode);
 
@@ -81,6 +82,9 @@ void get_dir(void *dir_buf, iNode *f_iNode);
 int os_rm(string f_name, string path); //删除文件
 bool os_rmdir(string dir_name, string path); //删除目录和目录下所有文件
 vector<string> os_ls(); //列出目录下所有文件
+<<<<<<< HEAD
+bool os_cd(string &currentpath, string newpath);// 切换目录  上下切换 or 给出全路径自动切换
+=======
 bool os_cd(string &currentpath, string newpath);// 切换目录  上下切换 or 给出全路径自动切换
 
 
@@ -88,3 +92,4 @@ bool os_cd(string &currentpath, string newpath);// 切换目录  上下切换 or
 //从头开始读取size字节的文件内容
 //从文件尾写入内容
 //清空文件，从头写入
+>>>>>>> 265bfe81ac54763d4bbf36946b667680909fafcb
