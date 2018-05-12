@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "../memory/PageMemoryPool.h"
+#include "../ProcManage/PM.h"
 
 #include <thread>
 
@@ -11,7 +12,7 @@ private:
 	SDL_Window* window;
 	SDL_Surface* windowSurface;
 	TTF_Font* font;
-	PM *procM;
+	PM* procM;
 	PageMemoryPool *memPool;
 public:
 	DisplayWindow(PM *procM, PageMemoryPool *memoryPool);

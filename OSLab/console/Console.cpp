@@ -102,7 +102,7 @@ bool Console::ls()
 
 bool Console::mkfile(string filename)
 {
-	if (!Create_File(filename, 1))
+	if (!Create_File(filename, workingDir, 1))
 		return false;
 
 	os_file* fp = Open_File(filename);
@@ -127,7 +127,7 @@ bool Console::mkfile(string filename)
 
 bool Console::mkexec(string filename)
 {
-	if (!Create_File(filename, 1))
+	if (!Create_File(filename, workingDir, 1))
 		return false;
 
 	os_file* fp = Open_File(filename);
@@ -142,14 +142,12 @@ bool Console::mkexec(string filename)
 		return false;
 
 	cout << "Please input the running time: " << endl;
-	int tmp;
 	cin >> tmp;
 
 	if (!os_fwrite(&tmp, 4, fp))
 		return false;
 
 	cout << "Please input the size of data putted into memory: " << endl;
-	int tmp;
 	cin >> tmp;
 
 	if (!os_fwrite(&tmp, 4, fp))
@@ -157,7 +155,7 @@ bool Console::mkexec(string filename)
 
 	cout << "Please input the content of file: " << endl;
 	string tmpData;
-	getline(cin, tmpData);
+	cin>>tmpData;
 
 	if (os_fwrite((void *)tmpData.c_str(), tmpData.size(), fp))
 	{
@@ -197,7 +195,7 @@ bool Console::ps()
 	tmpList += prio;
 	tmpList += string(10 - prio.length(), ' ');
 	tmpList += serviceTime;
-	tmpList += string(10 - serviceTime.length(), ' ');
+	tmpList += string(15 - serviceTime.length(), ' ');
 	tmpList += runTime;
 	tmpList += string(10 - runTime.length(), ' ');
 	cout << tmpList << endl;
@@ -225,7 +223,7 @@ bool Console::ps()
 		tmpList += prio;
 		tmpList += string(10 - prio.length(), ' ');
 		tmpList += serviceTime;
-		tmpList += string(10 - serviceTime.length(), ' ');
+		tmpList += string(15 - serviceTime.length(), ' ');
 		tmpList += runTime;
 		tmpList += string(10 - runTime.length(), ' ');
 		cout << tmpList << endl;
@@ -246,29 +244,33 @@ void Console::InputAnalyse(vector<string> args)
 			isExit = true;
 		else if (command == "rmfile")
 		{
-			if (os_rm(args[1], workingDir))
-				cout << "remove file successfully\n";
-			else
-				cout << "remove file error\n";
+			if (args.size() > 1)
+				if (os_rm(args[1], workingDir))
+					cout << "remove file successfully\n";
+				else
+					cout << "remove file error\n";
 		}
 		else if (command == "rmdir")
 		{
-			if (os_rmdir(args[1], workingDir))
-				cout << "remove dir successfully\n";
-			else
-				cout << "remove dir error\n";
+			if (args.size() > 1)
+				if (os_rmdir(args[1], workingDir))
+					cout << "remove dir successfully\n";
+				else
+					cout << "remove dir error\n";
 		}
 		else if (command == "cd")
 		{
-			if (!os_cd(workingDir, args[1]))
-				cout << "error filename\n";
+			if (args.size() > 1)
+				if (!os_cd(workingDir, args[1]))
+					cout << "error filename\n";
 		}
 		else if (command == "mkdir")
 		{
-			if (Create_File(args[1], 0))
-				cout << "mkdir successfully\n";
-			else
-				cout << "mkdir error\n";
+			if (args.size() > 1)
+				if (Create_File(args[1], workingDir, 0))
+					cout << "mkdir successfully\n";
+				else
+					cout << "mkdir error\n";
 		}
 		else if (command == "ls")
 		{
@@ -280,11 +282,13 @@ void Console::InputAnalyse(vector<string> args)
 		}
 		else if (command == "exec")
 		{
-			procM.addproc(args[1]);
+			if (args.size() > 1)
+				procM.addproc(args[1]);
 		}
 		else if (command == "kill")
 		{
-			procM.killproc(stoi(args[1]));
+			if (args.size() > 1)
+				procM.killproc(stoi(args[1]));
 		}
 		else if (command == "ps")
 		{
@@ -292,22 +296,27 @@ void Console::InputAnalyse(vector<string> args)
 		}
 		else if (command == "cat")
 		{
-			if (!cat(args[1]))
-				cout << "cat error\n";
+			if (args.size() > 1)
+				if (!cat(args[1]))
+					cout << "cat error\n";
 		}
 		else if (command == "mkfile")
 		{
-			if (mkfile(args[1]))
-				cout << "mkfile successfully\n";
-			else
-				cout << "mkfile error\n";
+			if (args.size() > 1)
+				if (mkfile(args[1]))
+					cout << "mkfile successfully\n";
+				else
+					cout << "mkfile error\n";
 		}
 		else if (command == "mkexec")
 		{
-			if (mkexec(args[1]))
-				cout << "mkfile successfully\n";
+			if (args.size() > 1)
+				if (mkexec(args[1]))
+					cout << "mkfile successfully\n";
+				else
+					cout << "mkfile error\n";
 			else
-				cout << "mkfile error\n";
+				cout << "args error\n";
 		}
 	}
 	catch (const std::exception& e)
