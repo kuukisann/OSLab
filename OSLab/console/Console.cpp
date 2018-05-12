@@ -34,7 +34,7 @@ void Console::waitForInput()
 	//TODO: mutex lock
 
 	string tmp;
-	cout << endl << workingDir << "$ ";
+	cout << endl << workingDir << " $ ";
 	getline(cin, tmp);
 
 	tmp = trim(tmp);
@@ -241,7 +241,10 @@ void Console::InputAnalyse(vector<string> args)
 	try
 	{
 		if (command == "exit")
+		{
 			isExit = true;
+			disWin.isExit = true;
+		}
 		else if (command == "rmfile")
 		{
 			if (args.size() > 1)

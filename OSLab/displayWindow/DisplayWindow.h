@@ -19,5 +19,6 @@ public:
 	~DisplayWindow();
 	void refreshWindow();
 	void refreshThread();
+	bool isExit = false;
 };
 
