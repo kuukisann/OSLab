@@ -42,6 +42,7 @@ void PM::addproc(string path)
 			{
 				//申请内存为0 或者 服务时间为0
 				// log 创建进程参数有误
+				Close_File(f);
 				mu.unlock();
 				return;
 			}
@@ -50,6 +51,7 @@ void PM::addproc(string path)
 			{
 
 				//log("内存大小小于数据大小，进程文件参数错误")
+				Close_File(f);
 				mu.unlock();
 				return;
 			}
@@ -99,6 +101,7 @@ void PM::addproc(string path)
 				}
 			}
 		}
+		Close_File(f);
 	}
 	else
 	{
@@ -265,7 +268,7 @@ void PM::scheduleproc()
 			currentproc->State = FINISH;
 
 			currenttime += currentproc->NeedTime; // 更新当前时间
-			// log 进程PCB已完成
+			// log 进程current->PID已完成
 		}
 		else
 		{
