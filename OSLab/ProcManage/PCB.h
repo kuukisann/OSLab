@@ -67,7 +67,7 @@ public:
 	string Name; // 进程名称
 	os_file* procftr; // 进程文件指针
 
-	int needmemsize; // 进程需要内存大小(Bytes)
+	int Needmemsize; // 进程需要内存大小(Bytes)
 	vector<int> Mem; //进程内存页号
 	int Size; //进程占用内存页数
 	procstate State;  //进程状态
@@ -94,7 +94,7 @@ private:
 };
 
 inline PCB::PCB(
-	unsigned int PID, string Path, string Name, os_file* f, int needmemsize, 
+	unsigned int PID, string Path, string Name, os_file* f, int Needmemsize, 
 	vector<int> Mem, unsigned int Prio, int ArrivalTime, int ServiceTime
 	)
 {
@@ -103,7 +103,7 @@ inline PCB::PCB(
 	this->Name = Name;
 	this->procftr = f;
 
-	this->needmemsize = needmemsize;
+	this->Needmemsize = Needmemsize;
 	this->Mem = Mem;
 	this->Size = Mem.size();
 	this->State = NEW;

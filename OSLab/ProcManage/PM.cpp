@@ -1,10 +1,11 @@
 #include<ctime>
 #include<iostream>
 #include<cstdlib>
+#include<ctime>
 #include"PM.h"
-#include "../memory/PageMemoryPool.h"
 
-PageMemoryPool* PMP;
+
+
 unsigned int PM::createPID()
 {
 	return ++currentPID;
@@ -13,15 +14,18 @@ unsigned int PM::createPID()
 
 void PM::addproc(string path)
 {
+	mu.lock();
 	if (currentnumproc >= MAXPROC)
 	{
 		//log无法创建进程，进程数已满
+		mu.unlock();
 		return;
 	}
 
 	if (currentpagenum >= MAXPAGENUM)
 	{
 		// log无法创建进程，内存已满
+		mu.unlock();
 		return;
 	}
 
@@ -38,6 +42,7 @@ void PM::addproc(string path)
 			{
 				//申请内存为0 或者 服务时间为0
 				// log 创建进程参数有误
+				mu.unlock();
 				return;
 			}
 
@@ -45,6 +50,7 @@ void PM::addproc(string path)
 			{
 
 				//log("内存大小小于数据大小，进程文件参数错误")
+				mu.unlock();
 				return;
 			}
 			vector<int> mem = PMP->osMalloc(needmemsize);
@@ -64,9 +70,8 @@ void PM::addproc(string path)
 				p.State = READY;
 				readylist.push_back(p);
 				currentpagenum += p.Size; // 更新内存页数
-
-										  //第一次初始化指针到数据块开始的位置
-				os_fseek(f, 12, OS_SEEK_SET);
+					  
+				os_fseek(f, 12, OS_SEEK_SET);//第一次初始化指针到数据块开始的位置
 
 				if (datablocksize < PAGESIZE)
 				{
@@ -98,12 +103,15 @@ void PM::addproc(string path)
 	else
 	{
 		// log("文件不存在")
+		mu.unlock();
 		return;
 	}
+	mu.unlock();
 }
 
 void PM::killproc(const unsigned int PID)
 {
+	mu.lock();
 	PCB p;
 	p.PID = PID;
 	list<PCB>::iterator i = find(readylist.begin(), readylist.end(), p);
@@ -113,12 +121,13 @@ void PM::killproc(const unsigned int PID)
 		if (i == waitlist.end())
 		{
 			//log不存在该进程
+			mu.unlock();
 			return;
 		}
 		else
 		{
 			i->State = DIED;
-			//
+			//log
 		}
 	}
 	else
@@ -128,7 +137,9 @@ void PM::killproc(const unsigned int PID)
 			currentproc = readylist.begin();
 		}
 		i->State = DIED;
+		//log
 	}
+	mu.unlock();
 
 }
 
@@ -154,81 +165,87 @@ osActive(currentproc->Mem[i]);
 */
 void PM::scheduleproc()
 {
+	mu.lock();
 	// RR调度算法
 
 	// 移出readylist中的FINISH和DIED进程
-	for (list<PCB>::iterator i = readylist.begin(); i != readylist.end();) // 不在此处i++的原因是，erase之后会导致迭代器i指向后一个
+	if (!readylist.empty())
 	{
-		if (i->State == FINISH || i->State == DIED) // 进程在上个时间片已完成
+		for (list<PCB>::iterator i = readylist.begin(); i != readylist.end();) // 不在此处i++的原因是，erase之后会导致迭代器i指向后一个
 		{
-			PMP->osFree(i->Mem); // 释放进程内存
-			Close_File(i->procftr); //关闭进程文件
+			if (i->State == FINISH || i->State == DIED) // 进程在上个时间片已完成
+			{
+				PMP->osFree(i->Mem); // 释放进程内存
+				Close_File(i->procftr); //关闭进程文件
 
 
-			currentnumproc -= i->Size; // 更新内存占用
-			i = readylist.erase(i); // 移出队列 
-			currentnumproc--; // 进程数减1 
-			//log 进程PCB 已退出内存
-			
+				currentnumproc -= i->Size; // 更新内存占用
+				i = readylist.erase(i); // 移出队列 
+				currentnumproc--; // 进程数减1 
+								  //log 进程PCB 已退出内存
+
+			}
+			else // next
+			{
+				i++;
+			}
 		}
-		else // next
-		{
-			i++;
-		}
-
-
 	}
+
 
 	// 移出waitlist中的DIED进程
-	for (list<PCB>::iterator i = waitlist.begin(); i != waitlist.end();)
+	if (!waitlist.empty())
 	{
-		if (i->State == DIED) // 进程被Kill
+		for (list<PCB>::iterator i = waitlist.begin(); i != waitlist.end();)
 		{
-			PMP->osFree(i->Mem); // 释放进程内存
-			Close_File(i->procftr); //关闭进程文件
+			if (i->State == DIED) // 进程被Kill
+			{
+				PMP->osFree(i->Mem); // 释放进程内存
+				Close_File(i->procftr); //关闭进程文件
 
-			currentnumproc -= i->Size; // 更新内存占用
-			i = waitlist.erase(i); // 移出队列 
-			currentnumproc--; // 进程数减1 
-			//log 进程PCB 已退出
+				currentnumproc -= i->Size; // 更新内存占用
+				i = waitlist.erase(i); // 移出队列 
+				currentnumproc--; // 进程数减1 
+								  //log 进程PCB 已退出
 
+			}
+			else // next
+			{
+				i++;
+			}
 		}
-		else // next
+
+		// 将waitlist中内存可行的进程调入内存
+		for (list<PCB>::iterator i = waitlist.begin(); i != waitlist.end();)
 		{
-			i++;
+			if ((i->Mem = PMP->osMalloc(i->Needmemsize)).size()) // 申请到了内存
+			{
+				PCB temp = *i;
+
+				temp.Size = temp.Mem.size();
+				temp.State = READY;
+
+				readylist.push_back(temp);
+				currentpagenum += temp.Size; // 更新内存页数
+				waitlist.erase(i);
+			}
+			else
+			{
+				i++;
+			}
 		}
 	}
 
-
-	// 将waitlist中内存可行的进程调入内存
-	for (list<PCB>::iterator i = waitlist.begin(); i != waitlist.end();)
-	{
-		if ((i->Mem = PMP->osMalloc(i->needmemsize)).size()) // 申请到了内存
-		{
-			PCB temp = *i;
-
-			temp.Size = temp.Mem.size();
-			temp.State = READY;
-
-			readylist.push_back(temp);
-			currentpagenum += temp.Size; // 更新内存页数
-			waitlist.erase(i);
-		}
-		else
-		{
-			i++;
-		}
-	}
 
 	// 调度
 	if (!readylist.empty() && readylist.begin()->ArrivalTime <= currenttime) //就绪队列不为空且满足时间条件
 	{
-		
+
 		// 运行队列第一个进程
 		currentproc = readylist.begin();
 
 		// 进程第一次进入内存，还未运行过，设置开始运行时间StartTime
-		if (currentproc->State == READY) 
+		if (currentproc->State == READY)
 		{
 			currentproc->StartTime = currenttime;
 		}
@@ -268,16 +285,17 @@ void PM::scheduleproc()
 	}
 	else
 	{
-		//log 当前无进程
-		return;
+		//log 当前时间：currentime 无进程运行
+		currenttime += timepiece;
 	}
-
+	mu.unlock();
 }
 
 
 // 以vector<PCB_Show>返回readylist中的PCB
 vector<PCB_Show> PM::showreadylist()
 {
+	mu.lock();
 	vector<PCB_Show> pr;
 	for (list<PCB>::iterator i = readylist.begin(); i != readylist.end(); i++)
 	{
@@ -293,12 +311,14 @@ vector<PCB_Show> PM::showreadylist()
 	}
 
 	return pr;
+	mu.unlock();
 }
 
 
 // 以vector<PCB_Show>返回waitlist中的PCB
 vector<PCB_Show> PM::showwaitlist()
 {
+	mu.lock();
 	vector<PCB_Show> pw;
 	for (list<PCB>::iterator i = waitlist.begin(); i != waitlist.end(); i++)
 	{
@@ -312,6 +332,22 @@ vector<PCB_Show> PM::showwaitlist()
 		p.RunTime = i->RunTime;
 		pw.push_back(p);
 	}
-
+	mu.unlock();
 	return pw;
+}
+
+void PM::run()
+{
+	cout << "run success" << endl;
+
+	clock_t strat = clock();
+	while (true)
+	{
+		if (clock() - strat >= timepiece * 1000)
+		{
+			strat = clock();
+			scheduleproc();
+			//cout << "schedule " << clock() << endl;
+		}
+	}
 }

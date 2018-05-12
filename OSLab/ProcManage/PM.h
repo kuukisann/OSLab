@@ -2,7 +2,10 @@
 
 #include<list>
 #include<vector>
+#include<thread>
+#include<mutex>
 #include"PCB.h"
+#include "../memory/PageMemoryPool.h"
 
 using namespace std;
 
@@ -32,14 +35,16 @@ struct PCB_Show
 
 
 
-enum  schedulestrategies { FCFS, SJF, RR, PRIO } ; // 调度类型:	先来先服务	最短剩余时间优先	时间片轮转	优先级调度
+enum  schedulestrategies { FCFS, SJF, RR, PRIO }; // 调度类型:	先来先服务	最短剩余时间优先	时间片轮转	优先级调度
 
 
 class PM
 {
 public:
-	PM(int t = 0, schedulestrategies s = RR, int tp = 2) // 构造函数 默认当前时间0，RR调度算法，时间片为2。
+	PM() {}
+	PM(PageMemoryPool* p, int t = 0, schedulestrategies s = RR, int tp = 2) // 构造函数 默认当前时间0，RR调度算法，时间片为2。
 	{
+		PMP = p;
 		currenttime = t;
 		strategy = s;
 		currentnumproc = 0;
@@ -47,17 +52,20 @@ public:
 		timepiece = tp;
 		currentPID = 0;
 		currentproc = readylist.begin();
+		thread runthread(bind(&PM::run, this));
+		runthread.detach();
 	}
+	~PM(){}
 	list<PCB> readylist; //运行及就绪队列 即占用内存的队列
 	list<PCB> waitlist; // 等待队列，在创建过程中由于内存不够等原因而无法进入内存的进程
 
 	unsigned int createPID(); // 维护一个PID池，返回PID
-	
+
 
 	void addproc(string path); // 添加进程
 	void killproc(unsigned int PID); // 强制结束进程
 	void scheduleproc(); // 调度进程
-
+	void run();
 	vector<PCB_Show> showreadylist();
 	vector<PCB_Show> showwaitlist();
 
@@ -71,6 +79,11 @@ private:
 
 	list<PCB>::iterator currentproc;
 	unsigned int currentPID;
+
+	PageMemoryPool* PMP; // 内存池类
+	mutex mu; // 访问readylist和waitlist锁
 };
+
+
 
 
