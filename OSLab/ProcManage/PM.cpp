@@ -244,7 +244,7 @@ void PM::scheduleproc()
 		currentproc = readylist.begin();
 
 		// 进程第一次进入内存，还未运行过，设置开始运行时间StartTime
-		if (currentproc->State == READY)
+		if (currentproc->State == READY || currentproc->StartTime == -1)
 		{
 			currentproc->StartTime = currenttime;
 		}
@@ -256,23 +256,21 @@ void PM::scheduleproc()
 		}
 
 		// 当前时间片是否可以运行完成
-		if (currentproc->NeedTime < timepiece) // 进程需要时间小于一个时间片
+		if (currentproc->NeedTime <= timepiece) // 进程需要时间小于一个时间片
 		{
-			currentproc->NeedTime = 0;
-			currentproc->RunTime += currentproc->NeedTime;
-			currentproc->FinishTime = currenttime + currentproc->NeedTime; // 记录进程完成时间
-			currentproc->State = FINISH;
-
 			currenttime += currentproc->NeedTime; // 更新当前时间
+			currentproc->RunTime += currentproc->NeedTime;
+			currentproc->FinishTime = currenttime; // 记录进程完成时间
+			currentproc->NeedTime = 0;
+			currentproc->State = FINISH;
 			// log 进程current->PID已完成
 		}
 		else
 		{
-			currentproc->NeedTime -= timepiece;
-			currentproc->RunTime += timepiece;
-			currentproc->State = WAITING;
-
 			currenttime += timepiece; // 更新当前时间
+			currentproc->RunTime += timepiece;
+			currentproc->NeedTime -= timepiece;
+			currentproc->State = WAITING;
 		}
 
 
