@@ -82,4 +82,14 @@ void get_dir(void *dir_buf, iNode *f_iNode);
 int os_rm(string f_name, string path); //删除文件
 bool os_rmdir(string dir_name, string path); //删除目录和目录下所有文件
 vector<string> os_ls(); //列出目录下所有文件
+<<<<<<< HEAD
 bool os_cd(string &currentpath, string newpath);// 切换目录  上下切换 or 给出全路径自动切换
+=======
+bool os_cd(string &currentpath, string newpath);// 切换目录  上下切换 or 给出全路径自动切换
+
+
+//从上一次后读取size字节的文件内容
+//从头开始读取size字节的文件内容
+//从文件尾写入内容
+//清空文件，从头写入
+>>>>>>> 265bfe81ac54763d4bbf36946b667680909fafcb

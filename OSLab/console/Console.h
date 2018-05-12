@@ -1,12 +1,16 @@
 #pragma once
 
 #include "../memory/PageMemoryPool.h"
+#include "../filesystem/disk.h"
+#include "../displayWindow/DisplayWindow.h"
+#include "../ProcManage/PM.h"
 
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <map>
+
 
 using namespace std;
 
@@ -16,14 +20,17 @@ private:
 	void Console::InputAnalyse(vector<string> cuttedString);
 	string trim(string str);
 	void InputCut(string input);
-	string workingDir = "/root/";
-	PageMemoryPool mempool = PageMemoryPool(10240, 20480, 32);
-	FileSystem fs = FileSystem(mempool);
+	string workingDir = "/root";
+	PageMemoryPool memPool;
+	DisplayWindow disWin;
+
+	PM procM;
+
 	bool cat(string filename);
-	bool rmfile(string filename);
-	bool rmdir(string filename);
-	bool pwd(string newDir);
-	
+	bool ls();
+	bool mkfile(string filename);
+	bool mkexec(string filename);
+	bool ps();
 public:
 	bool isExit = false;
 
