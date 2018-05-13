@@ -161,7 +161,7 @@ iNode* Create_File(string pathname, string cur_path, unsigned short f_type){ //�
 	}
 	//2.判断是否存在同名的文件
 	if (item == NULL) {
-		Log::w("create_file: Something wrong when analyse the path")
+		Log::w("create_file: Something wrong when analyse the path");
 		return NULL;
 	}
 	if (same_name(f_name, item) == -1) {

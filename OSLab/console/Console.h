@@ -20,9 +20,7 @@ private:
 	void Console::InputAnalyse(vector<string> cuttedString);
 	string trim(string str);
 	void InputCut(string input);
-	string workingDir = "/root";
-	PageMemoryPool memPool;
-	DisplayWindow disWin;
+	string workingDir;
 
 	PM procM;
 
@@ -32,10 +30,14 @@ private:
 	bool mkexec(string filename);
 	bool ps();
 public:
-	bool isExit = false;
+	bool isExit;
+
+	PageMemoryPool memPool;
+	DisplayWindow disWin;
 
 	Console();
 	~Console();
 	void waitForInput();
+	void inputThread();
 };
 

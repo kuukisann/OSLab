@@ -239,7 +239,7 @@ void PageMemoryPool::osActive(int memBlockIndex)
 
 	//change virtual mem index
 	pageTable[memBlockIndex] = tmpMemPageIndex;
-	Log::i("swap successfully\n");
+	Log::d("swap successfully\n");
 }
 
 PageMemStatus PageMemoryPool::getMemStatus()

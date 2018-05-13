@@ -19,15 +19,7 @@ void PM::addproc(string path)
 	if (currentnumproc >= MAXPROC)
 	{
 		//log无法创建进程，进程数已满
-		Log::w("currenttime is %d, currentnumproc is %d, can't create more proccess.", currenttime, currentnumproc);
-		mu.unlock();
-		return;
-	}
-
-	if (currentpagenum >= MAXPAGENUM)
-	{
-		// log无法创建进程，内存已满
-		Log::w("currenttime is %d, currentpagenum is %d, can't create more process.", currenttime, currentnumproc);
+		Log::w("currenttime is %d, currentnumproc is %d, can't create more proccess.\n", currenttime, currentnumproc);
 		mu.unlock();
 		return;
 	}
@@ -45,7 +37,7 @@ void PM::addproc(string path)
 			{
 				//申请内存为0 或者 服务时间为0
 				// log 创建进程参数有误
-				Log::w("currenttime is %d, needmemsize is %d, servicetime is %d, parameter error.", currenttime, needmemsize);
+				Log::w("currenttime is %d, needmemsize is %d, servicetime is %d, parameter error.\n", currenttime, needmemsize);
 				Close_File(f);
 				mu.unlock();
 				return;
@@ -55,7 +47,7 @@ void PM::addproc(string path)
 			{
 
 				//log("内存大小小于数据大小，进程文件参数错误")
-				Log::w("needmemsize size is less than datablocksize, process file parameter error.");
+				Log::w("needmemsize size is less than datablocksize, process file parameter error.\n");
 				Close_File(f);
 				mu.unlock();
 				return;

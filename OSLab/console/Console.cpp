@@ -8,21 +8,23 @@
 #include <map>
 #include <algorithm>
 #include <Windows.h>
+#include <thread>
 
 using namespace std;
 
 
-Console::Console() :memPool(10240, 20480, 32), procM(&memPool), disWin(&procM, &memPool)
+Console::Console() :
+	memPool(10240, 20480, 32), procM(&memPool), disWin(&procM, &memPool),
+	isExit(false), workingDir("/root")
 {
 	disk_activate();
+	thread inputT(std::bind(&Console::inputThread, this));
+	inputT.detach();
 }
 
 
 Console::~Console()
 {
-	memPool.~PageMemoryPool();
-	disWin.~DisplayWindow();
-	procM.~PM();
 }
 
 string Console::trim(string str)
@@ -32,18 +34,28 @@ string Console::trim(string str)
 	return str;
 }
 
+void Console::inputThread()
+{
+	while (!isExit)
+	{
+		waitForInput();
+	}
+}
+
 void Console::waitForInput()
 {
 	//TODO: mutex lock
 
-	string tmp;
+	char tmp[256];
+
 	cout << endl << workingDir << " $ ";
-	getline(cin, tmp);
+	cin.getline(tmp, 256);
+	string tmpStr(tmp);
 
-	tmp = trim(tmp);
+	tmpStr = trim(tmpStr);
 
-	if (tmp != "")
-		InputCut(tmp);
+	if (tmpStr != "")
+		InputCut(tmpStr);
 
 	//TODO: mutex unlock
 }
@@ -248,9 +260,6 @@ void Console::InputAnalyse(vector<string> args)
 			isExit = true;
 			disWin.isExit = true;
 			procM.isExit = true;
-			Sleep(2000);
-			disWin.~DisplayWindow();
-			procM.~PM();
 		}
 		else if (command == "rmfile")
 		{

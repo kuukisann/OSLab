@@ -13,7 +13,7 @@ SDL_Color bgColor = { 0,0,0 };
 
 
 DisplayWindow::DisplayWindow(PM *procM, PageMemoryPool *memoryPool) :
-	procM(procM), memPool(memoryPool)
+	procM(procM), memPool(memoryPool), isExit(false)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
@@ -25,14 +25,16 @@ DisplayWindow::DisplayWindow(PM *procM, PageMemoryPool *memoryPool) :
 	{
 		Log::w("font open error\n");
 	}
-	thread refreshT(bind(&DisplayWindow::refreshThread, this));
-	refreshT.detach();
 }
 
 
 DisplayWindow::~DisplayWindow()
 {
+	TTF_CloseFont(font); 
 	SDL_DestroyWindow(window);
+
+	//Quit SDL subsystems
+	TTF_Quit();
 	SDL_Quit();
 }
 
@@ -147,19 +149,4 @@ void DisplayWindow::refreshWindow()
 	}
 
 	SDL_UpdateWindowSurface(window);
-}
-
-void DisplayWindow::refreshThread()
-{
-	SDL_Event event;
-	int preClock = clock();
-	while (!isExit)
-	{
-		if (clock() - preClock >= 500)
-		{
-			preClock = clock();
-			refreshWindow();
-		}
-	}
-	cout << "window thread endded\n";
 }

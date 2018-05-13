@@ -53,6 +53,7 @@ public:
 		timepiece = tp;
 		currentPID = 0;
 		currentproc = readylist.begin();
+		isExit = false;
 		thread runthread(bind(&PM::run, this));
 		runthread.detach();
 	}
@@ -68,7 +69,7 @@ public:
 	void killproc(unsigned int PID); // 强制结束进程
 	void scheduleproc(); // 调度进程
 	void run();
-	bool isExit = false;
+	bool isExit;
 	vector<PCB_Show> showreadylist();
 	vector<PCB_Show> showwaitlist();
 
