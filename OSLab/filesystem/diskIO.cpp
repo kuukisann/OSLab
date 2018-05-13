@@ -83,24 +83,29 @@ bool disk_init()
 bool disk_activate()
 {
 	dir *tmp_root = root_dir;
-	FILE *fp = fopen(DEV_NAME, "rb");
-	if (fp) {
-		fseek(fp, INODE_START * BLOCK_SIZE, SEEK_SET);
-		fread(&iNode_table, iNode_NUM * sizeof(iNode), 1, fp);//读入iNode_table
-		for (int i = 0; i < FBLK_NUM; i++) {
-			fseek(fp, iNode_table[0].block_address[i] * BLOCK_SIZE, SEEK_SET);
-			fread((char*)tmp_root + i * BLOCK_SIZE, BLOCK_SIZE, 1, fp);
-		} //读入root_dir
-		current_dir = root_dir;
-		for (int j = 0; j < iNode_NUM; j++) {
-			if (iNode_table[j].i_mode != 2)
-				iNode_table[j].open_num = 0;
+	while (1) {
+		FILE *fp = fopen(DEV_NAME, "rb");
+		if (fp) {
+			fseek(fp, INODE_START * BLOCK_SIZE, SEEK_SET);
+			fread(&iNode_table, iNode_NUM * sizeof(iNode), 1, fp);//读入iNode_table
+			for (int i = 0; i < FBLK_NUM; i++) {
+				fseek(fp, iNode_table[0].block_address[i] * BLOCK_SIZE, SEEK_SET);
+				fread((char*)tmp_root + i * BLOCK_SIZE, BLOCK_SIZE, 1, fp);
+			} //读入root_dir
+			current_dir = root_dir;
+			int j = 0;
+			for (int j = 0; j < iNode_NUM; j++) {
+				if (iNode_table[j].i_mode != 2)
+					iNode_table[j].open_num = 0;
+			}
+			fclose(fp);
+			return true;
 		}
-		fclose(fp);
-		return true;
+		else{
+			disk_format();
+			disk_init();			
+		}
 	}
-	else
-		return false;
 }
 
 
