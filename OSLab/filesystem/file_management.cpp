@@ -73,7 +73,7 @@ dir* analyse_Path(string path, int *i_no){
 			pos = temp.find('/');
 			son = temp.substr(0,pos);
 			if (dirlookup(son, father_dir) == iNode_NUM + 1) {
-				//cout << "路径名错误\n";
+				Log::w("Wrong path.\n");
 				return NULL;
 			}
 			find_iNode = iNode_table[dirlookup(son,father_dir)]; //从father中找到son文件的iNode		
@@ -86,8 +86,11 @@ dir* analyse_Path(string path, int *i_no){
 		if (node != iNode_NUM + 1) {
 			find_iNode = iNode_table[node];//从father中找到temp文件的iNode
 		}
-		else
+		else{
+			Log::w("Cannot analyse the path.\n");
 			return NULL;
+		}
+			
 		get_dir(son_dir, &find_iNode);//传入iNode结点，返回son文件的文件目录项数组son_dir
 		*i_no = node;
 		current_dir = son_dir; //更新到表中	
@@ -152,14 +155,16 @@ iNode* Create_File(string pathname, string cur_path, unsigned short f_type){ //�
 
 	//1.检测文件名长度
 	if (f_name.length()> Name_length){
-		//printf("a shorter name is needed\n");
+		Log::w("a shorter name is needed\n");
 		return NULL;
 	}
 	//2.判断是否存在同名的文件
-	if (item == NULL)
+	if (item == NULL) {
+		Log::w("create_file: Something wrong when analyse the path")
 		return NULL;
+	}
 	if (same_name(f_name, item) == -1) {
-		//printf("在该目录下已有同名文件，创建失败。\n");
+		Log::w("The file already exits\n");
 		return NULL;
 	}
 	//3.创建文件目录项，放在文件所在的目录的directory列表中 
@@ -167,7 +172,7 @@ iNode* Create_File(string pathname, string cur_path, unsigned short f_type){ //�
 	for(i=0;i<DIR_NUM && (*(item+i)).iNode_no!=iNode_NUM + 1;i++){} //找到item的尾项///////指针数组的再看看形式//////// 
 	unsigned int temp_no = get_empty_iNode();
 	if(temp_no == iNode_NUM+1){
-		//printf("没有可用iNode节点，创建失败。\n"); 
+		Log::w("There is no iNode that can be used\n"); 
 		return NULL;
 	}
 	else{ //在数组尾项添加文件目录项  	
@@ -221,15 +226,17 @@ os_file* Open_File(string f_name){
 	if(f_name[0] == '/'){//绝对路径 
 		int rpos = f_name.rfind('/'); //找到f_name最后一次出现'/'的位置		 
 		dir* current= analyse_Path(f_name.substr(0,rpos), cur_i_no); //得到该文件所在目录的dir*数组 
-		if (current == NULL)
+		if (current == NULL) {
+			Log::w("open_file: Cannot find the dir.\n");
 			return NULL;
+		}
 		current_file->f_iNode = iNode_table + dirlookup(f_name.substr(rpos),current);
 	}
 	else{//相对路径，已经就是这个文件的名字了，此时依据dir* current_dir：文件所在的目录 
 		current_file->f_iNode = iNode_table + dirlookup(f_name,current_dir);  
 	}
 	if(current_file->f_iNode->open_num == 1){ //判断是否已经打开 
-		//printf("文件已经被打开，error！\n");
+		Log::w("The file has been opend\n");
 		return NULL;
 	}
 	current_file->f_pos = 0; //读指针置0 
@@ -247,8 +254,10 @@ void Close_File(os_file	*f){
 //删除普通文件 
 int os_rm(string f_name, string path){
 	int f_i = find_dir_no(f_name); //找到了要删除的文件目录项 
-	if(f_i == DIR_NUM+1)
+	if(f_i == DIR_NUM+1) {
+		Log::w("Cannot delete the file\n");
 		return 0;// 失败 
+	}
 	else
 		return Delete_File(f_name,f_i, path); //删除 
 } 

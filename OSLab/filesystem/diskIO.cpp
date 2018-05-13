@@ -102,6 +102,7 @@ bool disk_activate()
 			return true;
 		}
 		else{
+			Log::i("The disk doesn't exits!\n");
 			disk_format();
 			disk_init();			
 		}
@@ -161,6 +162,7 @@ int os_fread(void *v_buf, int size, os_file *fp)
 		off_set = BLOCK_SIZE; //偏移为0说明要读入一整块
 	//判断要读的数据是否超出文件界限
 	if (fp->f_pos + size > fp->f_iNode->i_size) {
+		Log::w("The size of data to be read is out of bound.\n");
 		return 0; 
 	}
 
@@ -208,6 +210,7 @@ int os_fwrite(void *v_buf, int size, os_file *fp)
 		off_set = BLOCK_SIZE; //偏移为0且写数据块大于一说明要写入一整块
 
 	if (total_blk > FBLK_NUM) { //写入数据块数超出文件的最大块数
+		Log::w("The size of data to be written is out of bound.\n");
 		return 0;
 	}
 	//如果需要，将空闲块分配给文件
@@ -268,16 +271,22 @@ int os_fseek(os_file *fp, int off_set, int flag)
 			fp->f_pos = off_set;
 			return 1;
 		}
-		else
+		else{
+			Log::w("SEEK_SET, The file pointer is out of bound.\n");
 			return 0;
+		}
+			
 	}
 	else if (flag == 1) { //标志位为1，指针移动至文件末尾
 		if (off_set == 0) {
 			fp->f_pos = fp->f_iNode->i_size;
 			return 1;
 		}
-		else
+		else{
+			Log::w("SEEK_END, The file pointer is out of buond.\n");
 			return 0;
+		}
+			
 	}
 }
 
@@ -321,6 +330,7 @@ int alloc_first_free()
 	}
 	fclose(fp);
 	free(bitmap);
+	Log::i("There is no free block to allocate.\n");
 	return -1;
 }
 //释放一个被占用的块
@@ -333,6 +343,7 @@ int free_block(int blk)
 	fseek(fp, BLOCK_SIZE * BITMAP_START, SEEK_SET);
 	fread(bitmap, MAX_BLOCK, 1, fp); //从磁盘上读入bitmap
 	if (blk <= DATA_START) {
+		Log::w("The critical block cannot be freed.\n");
 		return 0; //如果释放不可用区的块，报错，可输出至log
 	}
 	*(bitmap + blk) = 0; //bitmap置0
