@@ -260,6 +260,8 @@ int os_fwrite(void *v_buf, int size, os_file *fp)
 	}
 	fp->f_pos += size; //更新文件指针
 	fp->f_iNode->i_size += size; //更新文件大小
+	fseek(disk_p, INODE_START * BLOCK_SIZE, SEEK_SET);
+	fwrite(iNode_table, sizeof(iNode) * iNode_NUM, 1, disk_p); //iNode_table更新
 	fclose(disk_p); //关闭磁盘读写
 	free(buf);
 	return 1;
