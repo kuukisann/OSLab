@@ -18,10 +18,8 @@ int main(int argc, char** args)
 		}
 	}
 
-	con.disWin.closeWindow();
 	fclose(Log::fp);
-
-	Sleep(2000);
+	con.disWin.closeWindow();
 
 	return 0;
 }

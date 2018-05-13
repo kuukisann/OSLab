@@ -45,6 +45,8 @@ bool PageMemoryPool::replaceMemPage(int nNeededFreePage)
 
 			//change virtual mem index
 			*replacedVituralPageIter = tmpSwapPageIndex;
+
+			Log::d("Page %d (in Block %d) swap to Block %d\n", replacedVituralPageIter - pageTable.begin(), replacedMemPageIndex, tmpSwapPageIndex);
 		}
 		else
 			return false;
