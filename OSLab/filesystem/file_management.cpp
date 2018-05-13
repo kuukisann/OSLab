@@ -259,8 +259,11 @@ int os_rm(string f_name, string path){
 		Log::w("Cannot delete the file\n");
 		return 0;// 失败 
 	}
-	else
-		return Delete_File(f_name,f_i, path); //删除 
+	if (iNode_table[(*(current_dir + f_i)).iNode_no].i_mode == 0) {
+		Log::w("A common file is requested.\n");
+		return 0; //目录文件，错误
+	}
+	return Delete_File(f_name,f_i, path); //删除 
 } 
 
 //从dir* current_dir中查找到文件在目录的位置（数组下标） 
