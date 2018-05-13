@@ -119,6 +119,7 @@ vector<int> PageMemoryPool::osMalloc(int memSize)
 			pageTable[tmpVirtualPageIndex] = tmpMemPageIndex;
 			result.push_back(tmpVirtualPageIndex);
 		}
+		Log::i("malloc success, size of vector is %d\n", result.size());
 		return result;
 	}
 	catch (const std::exception& e)
@@ -212,7 +213,7 @@ void PageMemoryPool::osActive(int memBlockIndex)
 	}
 	if (tmpRealIndex < nMemPage)
 	{
-		Log::i("needn't swap\n");
+		Log::d("needn't swap\n");
 		return;
 	}
 
