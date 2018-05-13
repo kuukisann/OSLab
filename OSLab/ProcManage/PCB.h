@@ -45,7 +45,7 @@ enum procstate { NEW, READY, RUNNING, WAITING, FINISH, DIED}; // 进程状态：
 // 进程默认初始状态 NEW，即waitlist中的进程（假进程，未进入内存）的状态均为NEW；
 // 当进程第一次进入内存时，状态由NEW变为READY；
 // 当进程第一次运行时，状态由READY变为RUNNING；
-// 当进程被调度时，状态由RUNNING变为WAITING 或者 由RUNNING变为WAITING；
+// 当进程被调度时，状态由RUNNING变为WAITING 或者 由WAITING变为RUNNING；
 // 当进程完成时；状态由RUNNING变为FINISH；
 
 
@@ -82,12 +82,12 @@ public:
 
 	bool operator == (const PCB &a)const
 	{
-		return PID == a.PID ? true : false;
+		return (PID == a.PID);
 	}
 
 	bool operator <(const PCB &a)const
 	{
-		return PID < a.PID;
+		return (PID < a.PID);
 	}
 
 private:

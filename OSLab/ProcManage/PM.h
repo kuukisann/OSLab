@@ -57,8 +57,9 @@ public:
 		runthread.detach();
 	}
 	~PM() {}
-	list<PCB> readylist; //运行及就绪队列 即占用内存的队列
-	list<PCB> waitlist; // 等待队列，在创建过程中由于内存不够等原因而无法进入内存的进程
+
+	vector<PCB> readylist; //运行及就绪队列 即占用内存的队列
+	vector<PCB> waitlist; // 等待队列，在创建过程中由于内存不够等原因而无法进入内存的进程
 
 	unsigned int createPID(); // 维护一个PID池，返回PID
 
@@ -79,7 +80,7 @@ private:
 	schedulestrategies strategy; // 调度策略
 	int timepiece; // 时间片大小
 
-	list<PCB>::iterator currentproc;
+	vector<PCB>::iterator currentproc;
 
 	PageMemoryPool* PMP; // 内存池类
 	mutex mu; // 访问readylist和waitlist锁
