@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<malloc.h>
+#include "../log/Log.h"
 #include "disk.h"
 #include "file_management.h"
 

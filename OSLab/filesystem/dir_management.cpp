@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "file_management.h"
+#include "../log/Log.h"
 #include <iostream>
 #include <string>
 #include <vector>
