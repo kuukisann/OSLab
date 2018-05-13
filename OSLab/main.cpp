@@ -18,7 +18,7 @@ int main(int argc, char** args)
 		}
 	}
 
-	
+	con.disWin.closeWindow();
 	fclose(Log::fp);
 
 	Sleep(2000);

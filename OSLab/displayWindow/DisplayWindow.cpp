@@ -30,12 +30,12 @@ DisplayWindow::DisplayWindow(PM *procM, PageMemoryPool *memoryPool) :
 
 DisplayWindow::~DisplayWindow()
 {
-	TTF_CloseFont(font); 
-	SDL_DestroyWindow(window);
+	//TTF_CloseFont(font); 
+	//SDL_DestroyWindow(window);
 
-	//Quit SDL subsystems
-	TTF_Quit();
-	SDL_Quit();
+	////Quit SDL subsystems
+	//TTF_Quit();
+	//SDL_Quit();
 }
 
 
@@ -149,4 +149,14 @@ void DisplayWindow::refreshWindow()
 	}
 
 	SDL_UpdateWindowSurface(window);
+}
+
+void DisplayWindow::closeWindow()
+{
+	TTF_CloseFont(font);
+	SDL_DestroyWindow(window);
+
+	//Quit SDL subsystems
+	TTF_Quit();
+	SDL_Quit();
 }

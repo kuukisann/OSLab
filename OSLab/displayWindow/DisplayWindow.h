@@ -18,5 +18,6 @@ public:
 	~DisplayWindow();
 	void refreshWindow();
 	bool isExit;
+	void closeWindow();
 };
 
