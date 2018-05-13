@@ -20,7 +20,9 @@ Console::Console() :memPool(10240, 20480, 32), procM(&memPool), disWin(&procM, &
 
 Console::~Console()
 {
-
+	memPool.~PageMemoryPool();
+	disWin.~DisplayWindow();
+	procM.~PM();
 }
 
 string Console::trim(string str)
@@ -156,7 +158,7 @@ bool Console::mkexec(string filename)
 
 	cout << "Please input the content of file: " << endl;
 	string tmpData;
-	cin>>tmpData;
+	cin >> tmpData;
 
 	if (os_fwrite((void *)tmpData.c_str(), tmpData.size(), fp))
 	{
@@ -329,6 +331,6 @@ void Console::InputAnalyse(vector<string> args)
 	}
 	catch (const std::exception& e)
 	{
-		cout << "args error\n";
+		cout << "args error\n" << e.what() << endl;
 	}
 }

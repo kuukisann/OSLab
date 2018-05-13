@@ -9,13 +9,12 @@ class Log
 {
 private:
 	static mutex logMutex;
-	static FILE* fp;
 public:
 	static bool ifDebug;
 
 	Log();
 	~Log();
-	
+
 
 	/*
 	//use to print debug info
@@ -31,5 +30,6 @@ public:
 	//use to print warning
 	*/
 	static bool w(const char * format, ...);
+	static FILE* fp;
 };
 

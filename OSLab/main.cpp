@@ -1,4 +1,5 @@
 #include "console\Console.h"
+#include "log\Log.h"
 
 int main(int argc, char** args)
 {
@@ -7,5 +8,6 @@ int main(int argc, char** args)
 	{
 		con.waitForInput();
 	}
+	fclose(Log::fp);
 	return 0;
 }

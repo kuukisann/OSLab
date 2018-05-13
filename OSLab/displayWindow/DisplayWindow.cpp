@@ -64,7 +64,7 @@ void DisplayWindow::refreshWindow()
 	tmpList += size;
 	tmpList += string(10 - size.length(), ' ');
 	tmpList += state;
-	tmpList += string(5 - state.length(), ' ');
+	tmpList += string(7 - state.length(), ' ');
 	tmpList += prio;
 	tmpList += string(10 - prio.length(), ' ');
 	tmpList += serviceTime;
@@ -96,7 +96,7 @@ void DisplayWindow::refreshWindow()
 		tmpList += size;
 		tmpList += string(10 - size.length(), ' ');
 		tmpList += state;
-		tmpList += string(5 - state.length(), ' ');
+		tmpList += string(7 - state.length(), ' ');
 		tmpList += prio;
 		tmpList += string(10 - prio.length(), ' ');
 		tmpList += serviceTime;
@@ -134,7 +134,10 @@ void DisplayWindow::refreshWindow()
 	//refresh file list
 
 	//todo: get message with ls
-	SDL_Rect fileRect = { 330,630,540,240 };
+	SDL_Rect fileRect = { 430,630,540,240 };
+	textLine = TTF_RenderText_Blended(font, "File List", textColor);
+	SDL_BlitSurface(textLine, NULL, windowSurface, &fileRect);
+	fileRect.y += 30;
 	vector<string> fileList = os_ls();
 	for (int i = 0; i < fileList.size() && i < 8; i++)
 	{
